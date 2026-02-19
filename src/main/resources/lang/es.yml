@@ -424,6 +424,7 @@ gui:
   item_home: "&aHome"
   item_top: "&bTop"
   item_ranks: "&dRangos"
+  item_slots: "&6Mejorar slots"
   item_create: "&aCrear clan"
   item_list: "&eLista de clanes"
   info_title: "&8Info del Clan"

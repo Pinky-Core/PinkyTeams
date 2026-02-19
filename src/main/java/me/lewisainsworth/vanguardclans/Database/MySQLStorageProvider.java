@@ -1092,7 +1092,7 @@ public class MySQLStorageProvider extends AbstractStorageProvider {
                 }
 
                 // Update player_clan_history table
-                try (PreparedStatement ps = con.prepareStatement("UPDATE player_clan_history SET current_clan = ? WHERE current_clan = ?")) {
+                try (PreparedStatement ps = con.prepareStatement("UPDATE player_clan_history SET clan = ? WHERE clan = ?")) {
                     ps.setString(1, newName);
                     ps.setString(2, oldName);
                     ps.executeUpdate();

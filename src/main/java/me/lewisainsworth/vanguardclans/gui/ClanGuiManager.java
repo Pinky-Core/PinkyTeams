@@ -172,6 +172,7 @@ public class ClanGuiManager implements Listener {
         inv.setItem(16, createItem(Material.ENDER_PEARL, lang.getMessage("gui.item_home"), null));
         inv.setItem(22, createItem(Material.NETHER_STAR, lang.getMessage("gui.item_top"), null));
         inv.setItem(23, createItem(Material.ANVIL, lang.getMessage("gui.item_ranks"), null));
+        inv.setItem(24, createSlotsItem(clan));
         inv.setItem(26, createItem(Material.BARRIER, lang.getMessage("gui.item_close"), null));
 
         fill(inv);
@@ -547,6 +548,11 @@ public class ClanGuiManager implements Listener {
                 return;
             }
             openRolesMenu(player);
+            return;
+        }
+        if (slot == 24) {
+            player.performCommand("clan slots buy");
+            player.closeInventory();
             return;
         }
         if (slot == 26) {
@@ -1136,6 +1142,93 @@ public class ClanGuiManager implements Listener {
     private String safeValue(String value) {
         return value == null ? "N/A" : value;
     }
+
+    private String formatClanDisplayName(Player player, String clan, String templateKey) {
+        String plain = clan == null ? "N/A" : clan;
+        String colored = plugin.getStorageProvider().getClanColoredName(clan);
+        if (colored == null || colored.trim().isEmpty()) {
+            colored = plain;
+        }
+
+        String template = plugin.getFH().getConfig().getString("visual-display." + templateKey, "{colored}");
+        String raw = (template == null ? "{colored}" : template)
+            .replace("{colored}", colored)
+            .replace("{name}", plain)
+            .replace("{plain}", plain);
+
+        if (player != null) {
+            return MSG.color(player, raw);
+        }
+        return MSG.color(raw);
+    }
+
+    private ItemStack createSlotsItem(String clan) {
+        List<String> lore = new ArrayList<>();
+        lore.add(lang.getMessage("user.slots_status")
+            .replace("{used}", String.valueOf(plugin.getStorageProvider().getClanMemberCount(clan)))
+            .replace("{limit}", formatSlotLimit(calculateMaxSlots(clan))));
+
+        List<SlotUpgrade> upgrades = getConfiguredUpgrades();
+        int purchased = plugin.getStorageProvider().getClanSlotUpgrades(clan);
+        int points = plugin.getStorageProvider().getClanPoints(clan);
+        SlotUpgrade next = purchased < upgrades.size() ? upgrades.get(purchased) : null;
+
+        lore.add(lang.getMessage("user.slots_points")
+            .replace("{points}", String.valueOf(points)));
+        if (next != null) {
+            lore.add(lang.getMessage("user.slots_next_upgrade")
+                .replace("{cost}", String.valueOf(next.cost()))
+                .replace("{slots}", String.valueOf(next.slots())));
+        } else {
+            lore.add(lang.getMessage("user.slots_no_more_upgrades"));
+        }
+        lore.add("&eClick: /clan slots buy");
+
+        return createItem(Material.CHEST, lang.getMessage("gui.item_slots"), lore);
+    }
+
+    private int calculateMaxSlots(String clanName) {
+        FileConfiguration config = plugin.getFH().getConfig();
+        if (!config.getBoolean("clan-slots.enabled", false)) {
+            return Integer.MAX_VALUE;
+        }
+        if (!config.getBoolean("clan-slots.use-points", true)) {
+            int staticLimit = config.getInt("clan-slots.static-limit", 0);
+            return staticLimit <= 0 ? Integer.MAX_VALUE : staticLimit;
+        }
+
+        int baseSlots = config.getInt("clan-slots.base-slots", 0);
+        int upgradesPurchased = clanName == null ? 0 : plugin.getStorageProvider().getClanSlotUpgrades(clanName);
+        List<SlotUpgrade> upgrades = getConfiguredUpgrades();
+        int extraSlots = 0;
+        for (int i = 0; i < upgradesPurchased && i < upgrades.size(); i++) {
+            extraSlots += upgrades.get(i).slots();
+        }
+        return baseSlots + extraSlots;
+    }
+
+    private List<SlotUpgrade> getConfiguredUpgrades() {
+        List<SlotUpgrade> upgrades = new ArrayList<>();
+        for (Map<?, ?> entry : plugin.getFH().getConfig().getMapList("clan-slots.upgrades")) {
+            Object costObj = entry.get("cost");
+            Object slotsObj = entry.get("slots");
+            int cost = costObj instanceof Number ? ((Number) costObj).intValue() : 0;
+            int slots = slotsObj instanceof Number ? ((Number) slotsObj).intValue() : 0;
+            if (cost > 0 && slots > 0) {
+                upgrades.add(new SlotUpgrade(cost, slots));
+            }
+        }
+        return upgrades;
+    }
+
+    private String formatSlotLimit(int limit) {
+        if (limit == Integer.MAX_VALUE) {
+            return lang.getMessage("user.slots_unlimited");
+        }
+        return String.valueOf(limit);
+    }
+
+    private record SlotUpgrade(int cost, int slots) {}
 
     private String formatRole(String role) {
         if (role == null || role.trim().isEmpty()) {

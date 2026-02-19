@@ -1383,11 +1383,16 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                 plugin.getStorageProvider().updateClanName(clanName, plainName, newColored);
                 plugin.notifyClanRenamed(clanName, plainName);
                 plugin.getStorageProvider().reloadCache();
+                String updatedClan = plugin.getStorageProvider().getPlayerClan(player.getName());
+                if (updatedClan == null || !updatedClan.equalsIgnoreCase(plainName)) {
+                    throw new IllegalStateException("Clan rename was not persisted for player " + player.getName());
+                }
 
-                Bukkit.getScheduler().runTask(plugin, () ->
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    plugin.refreshClanVisuals();
                     player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_success")
-                        .replace("{name}", MSG.color(rawName))))
-                );
+                        .replace("{name}", MSG.color(rawName))));
+                });
             } catch (Exception e) {
                 e.printStackTrace();
                 Bukkit.getScheduler().runTask(plugin, () ->
@@ -1419,11 +1424,16 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             try {
                 plugin.getStorageProvider().setClanColoredName(clanName, coloredTag);
                 plugin.getStorageProvider().reloadCache();
+                String updatedTag = plugin.getStorageProvider().getClanColoredName(clanName);
+                if (updatedTag == null || !updatedTag.equals(coloredTag)) {
+                    throw new IllegalStateException("Clan tag was not persisted for clan " + clanName);
+                }
 
-                Bukkit.getScheduler().runTask(plugin, () ->
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    plugin.refreshClanVisuals();
                     player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_tag_success")
-                        .replace("{name}", coloredTag)))
-                );
+                        .replace("{name}", coloredTag)));
+                });
             } catch (Exception e) {
                 e.printStackTrace();
                 Bukkit.getScheduler().runTask(plugin, () ->

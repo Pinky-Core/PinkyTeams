@@ -379,6 +379,20 @@ public class VanguardClan extends JavaPlugin {
       return discordNotifier;
    }
 
+   public void refreshClanVisuals() {
+      if (nameTagManager != null) {
+         nameTagManager.resetTeams();
+      }
+      if (tabHook != null) {
+         tabHook.stop();
+         tabHook.start();
+      }
+      if (unlimitedNametagHook != null) {
+         unlimitedNametagHook.stop();
+         unlimitedNametagHook.start();
+      }
+   }
+
    public void notifyClanDeleted(String clanName) {
       if (clanName == null) {
          return;

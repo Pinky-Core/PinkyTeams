@@ -422,6 +422,7 @@ gui:
   item_home: "&aHome"
   item_top: "&bTop"
   item_ranks: "&dRanks"
+  item_slots: "&6Upgrade slots"
   item_create: "&aCreate clan"
   item_list: "&eClan list"
   info_title: "&8Clan Info"
