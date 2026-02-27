@@ -1091,11 +1091,20 @@ public class MySQLStorageProvider extends AbstractStorageProvider {
                     ps.executeUpdate();
                 }
 
-                // Update player_clan_history table
-                try (PreparedStatement ps = con.prepareStatement("UPDATE player_clan_history SET clan = ? WHERE clan = ?")) {
-                    ps.setString(1, newName);
-                    ps.setString(2, oldName);
-                    ps.executeUpdate();
+                // Update player_clan_history table (supports legacy schemas)
+                String historyClanColumn = null;
+                if (hasColumn(con, "player_clan_history", "clan")) {
+                    historyClanColumn = "clan";
+                } else if (hasColumn(con, "player_clan_history", "current_clan")) {
+                    historyClanColumn = "current_clan";
+                }
+                if (historyClanColumn != null) {
+                    try (PreparedStatement ps = con.prepareStatement(
+                        "UPDATE player_clan_history SET " + historyClanColumn + " = ? WHERE " + historyClanColumn + " = ?")) {
+                        ps.setString(1, newName);
+                        ps.setString(2, oldName);
+                        ps.executeUpdate();
+                    }
                 }
 
                 con.commit();
@@ -1466,6 +1475,13 @@ public class MySQLStorageProvider extends AbstractStorageProvider {
                     alter.executeUpdate("ALTER TABLE " + table + " ADD COLUMN " + column + " " + definition);
                 }
             }
+        }
+    }
+
+    private boolean hasColumn(Connection con, String table, String column) throws SQLException {
+        DatabaseMetaData meta = con.getMetaData();
+        try (ResultSet rs = meta.getColumns(null, null, table, column)) {
+            return rs.next();
         }
     }
 
