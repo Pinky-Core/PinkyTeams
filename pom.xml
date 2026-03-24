@@ -6,7 +6,7 @@
 
     <groupId>me.lewisainsworth</groupId>
     <artifactId>vanguardclans</artifactId>
-    <version>1.5.8</version>
+    <version>1.5.9</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -98,8 +98,8 @@
         <!-- TAB API (provided, server supplies the jar) -->
         <dependency>
             <groupId>com.github.NEZNAMY</groupId>
-            <artifactId>TAB</artifactId>
-            <version>5.4.0</version>
+            <artifactId>TAB-API</artifactId>
+            <version>5.5.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

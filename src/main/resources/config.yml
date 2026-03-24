@@ -26,6 +26,9 @@
 prefix: "&7[&6&lᴠᴀɴɢᴜᴀʀᴅ&7&lᴄʟᴀɴꜱ&7]"
 
 
+placeholders:
+  no-clan-value: "N/A" # text to show for clan placeholders when player has no clan (a player without clan will show "N/A", empty string shows nothing)
+
 commands:
   # When true, /clan without arguments will show the main help page.
   # When false, /clan without arguments will return a "Command not found" message.

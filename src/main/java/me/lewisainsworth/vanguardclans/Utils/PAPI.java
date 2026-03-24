@@ -70,11 +70,11 @@ public class PAPI extends PlaceholderExpansion implements Relational {
             return handleTopPlaceholder(normalized);
         }
 
-        if (player == null) return "N/A";
+        if (player == null) return getNoClanPlaceholder();
 
         Econo econ = plugin.getEcon();
         String clanName = getPlayerClan(player.getName());
-        if (clanName == null) return "N/A";
+        if (clanName == null) return getNoClanPlaceholder();
 
         switch (normalized) {
             case "prefix":
@@ -198,6 +198,10 @@ public class PAPI extends PlaceholderExpansion implements Relational {
     private String getPlayerClan(String playerName) {
         if (playerName == null) return null;
         return plugin.getStorageProvider().getPlayerClan(playerName);
+    }
+
+    private String getNoClanPlaceholder() {
+        return MSG.color(plugin.getFH().getConfig().getString("placeholders.no-clan-value", "N/A"));
     }
 
     private String handleTopPlaceholder(String identifier) {
