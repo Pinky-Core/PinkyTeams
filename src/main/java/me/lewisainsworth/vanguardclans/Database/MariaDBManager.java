@@ -1379,12 +1379,9 @@ public class MariaDBManager extends AbstractStorageProvider {
                     ps.executeUpdate();
                 }
 
-                // Update clan_users table
-                String userSql = "UPDATE clan_users SET clan = ? WHERE clan = ?";
-                try (PreparedStatement ps = con.prepareStatement(userSql)) {
-                    ps.setString(1, newName);
-                    ps.setString(2, oldName);
-                    ps.executeUpdate();
+                String[] clanColumnTables = {"clan_users", "friendlyfire", "friendlyfire_allies", "clan_invites", "reports", "clan_homes", "clan_roles", "player_clan_history"};
+                for (String table : clanColumnTables) {
+                    updateColumnIfExists(con, table, "clan", oldName, newName);
                 }
 
                 // Update alliances table
@@ -1402,16 +1399,8 @@ public class MariaDBManager extends AbstractStorageProvider {
                     ps.executeUpdate();
                 }
 
-                // Update other tables that reference clan names
-                String[] tables = {"clan_homes", "clan_invites", "pending_alliances", "clan_reports", "friendlyfire", "clan_roles"};
-                for (String table : tables) {
-                    String updateSql = "UPDATE " + table + " SET clan = ? WHERE clan = ?";
-                    try (PreparedStatement ps = con.prepareStatement(updateSql)) {
-                        ps.setString(1, newName);
-                        ps.setString(2, oldName);
-                        ps.executeUpdate();
-                    }
-                }
+                updateColumnIfExists(con, "pending_alliances", "clan1", oldName, newName);
+                updateColumnIfExists(con, "pending_alliances", "clan2", oldName, newName);
 
                 con.commit();
             } catch (Exception e) {
@@ -1762,32 +1751,9 @@ public class MariaDBManager extends AbstractStorageProvider {
                     ps.executeUpdate();
                 }
 
-                // Update clan_users table
-                try (PreparedStatement ps = con.prepareStatement("UPDATE clan_users SET clan = ? WHERE clan = ?")) {
-                    ps.setString(1, newName);
-                    ps.setString(2, oldName);
-                    ps.executeUpdate();
-                }
-
-                // Update friendlyfire table
-                try (PreparedStatement ps = con.prepareStatement("UPDATE friendlyfire SET clan = ? WHERE clan = ?")) {
-                    ps.setString(1, newName);
-                    ps.setString(2, oldName);
-                    ps.executeUpdate();
-                }
-
-                // Update clan_invites table
-                try (PreparedStatement ps = con.prepareStatement("UPDATE clan_invites SET clan = ? WHERE clan = ?")) {
-                    ps.setString(1, newName);
-                    ps.setString(2, oldName);
-                    ps.executeUpdate();
-                }
-
-                // Update reports table
-                try (PreparedStatement ps = con.prepareStatement("UPDATE reports SET clan = ? WHERE clan = ?")) {
-                    ps.setString(1, newName);
-                    ps.setString(2, oldName);
-                    ps.executeUpdate();
+                String[] clanColumnTables = {"clan_users", "friendlyfire", "friendlyfire_allies", "clan_invites", "reports", "clan_homes", "clan_roles", "player_clan_history"};
+                for (String table : clanColumnTables) {
+                    updateColumnIfExists(con, table, "clan", oldName, newName);
                 }
 
                 // Update alliances table
@@ -1814,12 +1780,7 @@ public class MariaDBManager extends AbstractStorageProvider {
                     ps.executeUpdate();
                 }
 
-                // Update player_clan_history table
-                try (PreparedStatement ps = con.prepareStatement("UPDATE player_clan_history SET current_clan = ? WHERE current_clan = ?")) {
-                    ps.setString(1, newName);
-                    ps.setString(2, oldName);
-                    ps.executeUpdate();
-                }
+                updateColumnIfExists(con, "player_clan_history", "current_clan", oldName, newName);
 
                 con.commit();
             } catch (SQLException e) {
@@ -1828,6 +1789,25 @@ public class MariaDBManager extends AbstractStorageProvider {
             } finally {
                 con.setAutoCommit(true);
             }
+        }
+    }
+
+    private boolean hasColumn(Connection con, String table, String column) throws SQLException {
+        DatabaseMetaData meta = con.getMetaData();
+        try (ResultSet rs = meta.getColumns(null, null, table, column)) {
+            return rs.next();
+        }
+    }
+
+    private void updateColumnIfExists(Connection con, String table, String column, String oldValue, String newValue) throws SQLException {
+        if (!hasColumn(con, table, column)) {
+            return;
+        }
+
+        try (PreparedStatement ps = con.prepareStatement("UPDATE " + table + " SET " + column + " = ? WHERE " + column + " = ?")) {
+            ps.setString(1, newValue);
+            ps.setString(2, oldValue);
+            ps.executeUpdate();
         }
     }
     

@@ -33,6 +33,9 @@ commands:
   # When true, /clan without arguments will show the main help page.
   # When false, /clan without arguments will return a "Command not found" message.
   show-main-help-page: true
+  # Extra aliases for /clan. Example for Turkish servers: /klan
+  clan-aliases:
+    - "klan"
 
 storage:
   # Storage type: mariadb, mysql, h2, sqlite, yaml
@@ -167,6 +170,17 @@ gui:
 clan-name:
   # Charact. limitations for clan names (0 = unlimited)
   max-length: 16
+  regex:
+    enabled: false
+    # Default allows only letters, numbers and underscores.
+    pattern: "^[A-Za-z0-9_]+$"
+  rename:
+    cooldown:
+      enabled: false
+      seconds: 86400
+    fee:
+      enabled: false
+      amount: 1000
 
 economy:
   enabled: true

@@ -16,6 +16,8 @@ import me.lewisainsworth.vanguardclans.Database.StorageProvider;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.text.DecimalFormat;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -1369,14 +1371,41 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             return;
         }
 
+        if (!isClanNameAllowedByRegex(plainName)) {
+            player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_invalid_regex")));
+            return;
+        }
+
         boolean sameName = clanName != null && clanName.equalsIgnoreCase(plainName);
         if (!sameName && plugin.getStorageProvider().clanExists(plainName)) {
             player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_exists")));
             return;
         }
 
-        String currentColored = plugin.getStorageProvider().getClanColoredName(clanName);
-        String newColored = (currentColored == null || currentColored.isEmpty()) ? rawName : currentColored;
+        if (!sameName) {
+            long cooldownLeft = getRenameCooldownSecondsLeft(clanName);
+            if (cooldownLeft > 0) {
+                player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_cooldown")
+                    .replace("{time}", formatDuration(cooldownLeft))
+                    .replace("{seconds}", String.valueOf(cooldownLeft))));
+                return;
+            }
+
+            FileConfiguration config = plugin.getFH().getConfig();
+            double renameCost = config.getDouble("clan-name.rename.fee.amount", 0.0);
+            if (config.getBoolean("clan-name.rename.fee.enabled", false) && renameCost > 0
+                && config.getBoolean("economy.enabled", true)) {
+                Econo econ = VanguardClan.getEcon();
+                if (econ.getBalance(player) < renameCost) {
+                    player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_no_money")
+                        .replace("{cost}", formatMoney(renameCost))));
+                    return;
+                }
+                econ.withdraw(player, renameCost);
+            }
+        }
+
+        String newColored = rawName;
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
@@ -1389,6 +1418,9 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                 }
 
                 Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (!sameName) {
+                        setRenameCooldown(plainName);
+                    }
                     plugin.refreshClanVisuals();
                     player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_success")
                         .replace("{name}", MSG.color(rawName))));
@@ -1552,6 +1584,11 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
         // Validar nombres bloqueados
         if (config.getStringList("names-blocked.blocked").stream().anyMatch(b -> b.equalsIgnoreCase(plainClanName))) {
             sender.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.create_name_blocked")));
+            return;
+        }
+
+        if (!isClanNameAllowedByRegex(plainClanName)) {
+            sender.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.create_name_invalid_regex")));
             return;
         }
 
@@ -2253,6 +2290,64 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
 
     private int getMaxClanNameLength() {
         return plugin.getFH().getConfig().getInt("clan-name.max-length", ClanNameHandler.DEFAULT_MAX_VISIBLE_LENGTH);
+    }
+
+    private boolean isClanNameAllowedByRegex(String clanName) {
+        FileConfiguration config = plugin.getFH().getConfig();
+        if (!config.getBoolean("clan-name.regex.enabled", false)) {
+            return true;
+        }
+
+        String regex = config.getString("clan-name.regex.pattern", "^[A-Za-z0-9_]+$");
+        try {
+            return Pattern.matches(regex, clanName);
+        } catch (PatternSyntaxException e) {
+            plugin.getLogger().warning("Invalid clan-name.regex.pattern: " + e.getMessage());
+            return true;
+        }
+    }
+
+    private long getRenameCooldownSecondsLeft(String clanName) {
+        FileConfiguration config = plugin.getFH().getConfig();
+        if (!config.getBoolean("clan-name.rename.cooldown.enabled", false)) {
+            return 0L;
+        }
+
+        long cooldownSeconds = config.getLong("clan-name.rename.cooldown.seconds", 0L);
+        if (cooldownSeconds <= 0 || clanName == null || clanName.isEmpty()) {
+            return 0L;
+        }
+
+        long lastRename = plugin.getFH().getData().getLong("clan-name-renames." + clanName.toLowerCase(Locale.ROOT), 0L);
+        long elapsedSeconds = (System.currentTimeMillis() - lastRename) / 1000L;
+        return Math.max(0L, cooldownSeconds - elapsedSeconds);
+    }
+
+    private void setRenameCooldown(String clanName) {
+        if (clanName == null || clanName.isEmpty()) {
+            return;
+        }
+
+        plugin.getFH().getData().set("clan-name-renames." + clanName.toLowerCase(Locale.ROOT), System.currentTimeMillis());
+        plugin.getFH().saveData();
+    }
+
+    private String formatDuration(long totalSeconds) {
+        long days = totalSeconds / 86400L;
+        long hours = (totalSeconds % 86400L) / 3600L;
+        long minutes = (totalSeconds % 3600L) / 60L;
+        long seconds = totalSeconds % 60L;
+
+        if (days > 0) {
+            return days + "d " + hours + "h";
+        }
+        if (hours > 0) {
+            return hours + "h " + minutes + "m";
+        }
+        if (minutes > 0) {
+            return minutes + "m " + seconds + "s";
+        }
+        return seconds + "s";
     }
 
     @Override

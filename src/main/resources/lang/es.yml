@@ -157,6 +157,9 @@ user:
   edit_name_too_long: "&cEl nombre del clan supera el máximo de {max} caracteres visibles."
   edit_name_blocked: "&cEse nombre de clan está bloqueado y no se puede usar."
   edit_name_exists: "&cYa existe un clan con ese nombre."
+  edit_name_invalid_regex: "&cEse nombre de clan contiene caracteres inválidos."
+  edit_name_cooldown: "&cDebes esperar {time} antes de cambiar el nombre del clan otra vez."
+  edit_name_no_money: "&cNo tienes suficiente dinero para cambiar el nombre del clan. Necesitas: &2&l${cost}"
   edit_tag_success: "&3 Tag del clan cambiado a: &f{name}"
   edit_tag_error: "&c Error al cambiar el tag del clan."
   edit_tag_mismatch: "&cEl tag debe mantener el mismo nombre del clan. Usa /clan edit name para renombrar."
@@ -177,6 +180,7 @@ user:
   create_error: "&c Error al crear el clan."
   create_name_too_long: "&cEl nombre del clan es demasiado largo. Máximo {max} caracteres visibles."
   create_name_blocked: "&c Este nombre está bloqueado."
+  create_name_invalid_regex: "&cEse nombre contiene caracteres inválidos."
 
   # CLAN HOME COMMAND
   home_cooldown: "&cDebes esperar {seconds} segundos antes de usar /clan home nuevamente."

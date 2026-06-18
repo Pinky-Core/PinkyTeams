@@ -505,14 +505,9 @@ public class MySQLStorageProvider extends AbstractStorageProvider {
                     ps.executeUpdate();
                 }
                 
-                // Update all related tables
-                String[] tables = {"clan_users", "alliances", "friendlyfire", "clan_invites", "pending_alliances", "reports", "clan_homes", "clan_roles"};
-                for (String table : tables) {
-                    try (PreparedStatement ps = con.prepareStatement("UPDATE " + table + " SET clan = ? WHERE clan = ?")) {
-                        ps.setString(1, newName);
-                        ps.setString(2, oldName);
-                        ps.executeUpdate();
-                    }
+                String[] clanColumnTables = {"clan_users", "friendlyfire", "friendlyfire_allies", "clan_invites", "reports", "clan_homes", "clan_roles", "player_clan_history"};
+                for (String table : clanColumnTables) {
+                    updateColumnIfExists(con, table, "clan", oldName, newName);
                 }
                 
                 // Update alliances table (clan1 and clan2 columns)
@@ -1482,6 +1477,18 @@ public class MySQLStorageProvider extends AbstractStorageProvider {
         DatabaseMetaData meta = con.getMetaData();
         try (ResultSet rs = meta.getColumns(null, null, table, column)) {
             return rs.next();
+        }
+    }
+
+    private void updateColumnIfExists(Connection con, String table, String column, String oldValue, String newValue) throws SQLException {
+        if (!hasColumn(con, table, column)) {
+            return;
+        }
+
+        try (PreparedStatement ps = con.prepareStatement("UPDATE " + table + " SET " + column + " = ? WHERE " + column + " = ?")) {
+            ps.setString(1, newValue);
+            ps.setString(2, oldValue);
+            ps.executeUpdate();
         }
     }
 

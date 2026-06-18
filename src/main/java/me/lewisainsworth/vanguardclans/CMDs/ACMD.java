@@ -397,6 +397,7 @@ public class ACMD implements CommandExecutor, TabCompleter {
         sender.sendMessage(MSG.color(langManager.getMessage("msg.reloading")));
 
         // Recargar archivos
+        plugin.reloadConfig();
         plugin.getFH().reloadConfig();
         plugin.getFH().reloadData();
 
@@ -407,7 +408,7 @@ public class ACMD implements CommandExecutor, TabCompleter {
         plugin.getLangManager().reload();
 
         // Recargar comandos (si es necesario)
-        plugin.getCommand("clan").setExecutor(new CCMD(plugin, plugin.getLangManager()));
+        plugin.refreshClanCommand();
         plugin.getCommand("clanadmin").setExecutor(new ACMD(plugin));
 
         if (plugin.getNameTagManager() != null) {
