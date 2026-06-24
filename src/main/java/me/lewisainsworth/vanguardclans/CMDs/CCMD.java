@@ -35,6 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.EventHandler;
@@ -130,7 +131,7 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                     sender.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.no_permission")));
                     return true;
                 }
-                this.disband(sender, playerClan);
+                this.disband(sender, playerClan, args);
                 break;
 
             case "sethome":
@@ -145,8 +146,7 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                 if (!hasClanPermission(player, playerClan, ClanPermission.SETHOME)) {
                     return true;
                 }
-                plugin.getStorageProvider().setClanHome(playerClan, player.getLocation());
-                player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.home_set")));
+                setHome(player, playerClan);
                 break;
 
             case "delhome":
@@ -751,15 +751,20 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             sender.sendMessage(MSG.color(langManager.getMessage("user.stats_leader").replace("{leader}", leader != null ? leader : "-")));
             sender.sendMessage(MSG.color(langManager.getMessage("user.stats_privacy").replace("{privacy}", privacy != null ? privacy : "public")));
             sender.sendMessage(MSG.color(langManager.getMessage("user.stats_money").replace("{money}", formatMoney(sp.getClanMoney(clanName)))));
+            sender.sendMessage(MSG.color(langManager.getMessage("user.stats_points").replace("{points}", String.valueOf(sp.getClanPoints(clanName)))));
 
             sender.sendMessage(MSG.color(langManager.getMessage("user.stats_members_title")));
 
             double totalKD = 0.0;
             int count = 0;
+            int totalKills = 0;
+            int totalDeaths = 0;
 
             java.util.List<String> members = sp.getClanMembers(clanName);
             for (String username : members) {
                 double kd = sp.getKillDeathRatio(username);
+                totalKills += sp.getPlayerKills(username);
+                totalDeaths += sp.getPlayerDeaths(username);
                 totalKD += kd;
                 count++;
                 sender.sendMessage(MSG.color(langManager.getMessage("user.stats_member_line")
@@ -768,6 +773,8 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             }
 
             double avgKD = count > 0 ? totalKD / count : 0.0;
+            sender.sendMessage(MSG.color(langManager.getMessage("user.stats_kills").replace("{kills}", String.valueOf(totalKills))));
+            sender.sendMessage(MSG.color(langManager.getMessage("user.stats_deaths").replace("{deaths}", String.valueOf(totalDeaths))));
             sender.sendMessage(MSG.color(langManager.getMessage("user.stats_avg_kd").replace("{avgKD}", String.format("%.2f", avgKD))));
             sender.sendMessage(MSG.color(langManager.getMessage("user.stats_footer")));
         } catch (Exception e) {
@@ -826,6 +833,13 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             }
             if (!econ.has(player, amount)) {
                 player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.economy_not_enough_player")));
+                return;
+            }
+
+            double maxBankBalance = config.getDouble("economy.bank.max-balance", 0.0);
+            if (maxBankBalance > 0 && clanBalance + amount > maxBankBalance) {
+                player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.economy_bank_limit")
+                    .replace("{limit}", formatMoney(maxBankBalance))));
                 return;
             }
 
@@ -1352,10 +1366,17 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
         }
         String plainName = ClanNameHandler.getVisibleName(rawName);
         int maxVisibleLength = getMaxClanNameLength();
+        int minVisibleLength = getMinClanNameLength();
 
         if (maxVisibleLength > 0 && plainName.length() > maxVisibleLength) {
             player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_too_long")
                 .replace("{max}", String.valueOf(maxVisibleLength))));
+            return;
+        }
+
+        if (minVisibleLength > 0 && plainName.length() < minVisibleLength) {
+            player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_too_short")
+                .replace("{min}", String.valueOf(minVisibleLength))));
             return;
         }
 
@@ -1444,11 +1465,16 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
         }
 
         String coloredTag = MSG.color(rawTag);
-        String visibleName = ClanNameHandler.getVisibleName(coloredTag);
+        String visibleName = ClanNameHandler.getVisibleName(rawTag);
         int maxVisibleLength = getMaxClanNameLength();
         if (maxVisibleLength > 0 && visibleName.length() > maxVisibleLength) {
             player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_name_too_long")
                 .replace("{max}", String.valueOf(maxVisibleLength))));
+            return;
+        }
+
+        if (!isClanTagAllowedByRegex(visibleName)) {
+            player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.edit_tag_invalid_regex")));
             return;
         }
 
@@ -1514,7 +1540,7 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
 
 
 
-    public void disband(CommandSender sender, String playerClan) {
+    public void disband(CommandSender sender, String playerClan, String[] args) {
         if (playerClan == null || playerClan.isEmpty()) {
             sender.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.no_clan")));
             return;
@@ -1522,6 +1548,11 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
 
         Player player = (Player) sender;
         if (!hasClanPermission(player, playerClan, ClanPermission.DISBAND)) {
+            return;
+        }
+        if (plugin.getFH().getConfig().getBoolean("clan.disband-confirmation.enabled", true)
+            && (args.length < 2 || !args[1].equalsIgnoreCase("confirm"))) {
+            sender.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.disband_confirm")));
             return;
         }
         Econo econ = VanguardClan.getEcon();
@@ -1574,10 +1605,17 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
         FileConfiguration config = plugin.getFH().getConfig();
         Econo econ = VanguardClan.getEcon();
         int maxClanNameLength = getMaxClanNameLength();
+        int minClanNameLength = getMinClanNameLength();
 
         if (maxClanNameLength > 0 && plainClanName.length() > maxClanNameLength) {
             sender.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.create_name_too_long")
                 .replace("{max}", String.valueOf(maxClanNameLength))));
+            return;
+        }
+
+        if (minClanNameLength > 0 && plainClanName.length() < minClanNameLength) {
+            sender.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.create_name_too_short")
+                .replace("{min}", String.valueOf(minClanNameLength))));
             return;
         }
 
@@ -1662,6 +1700,11 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                         PECMD.addClanToHistory(player, plainClanName);
                         player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.create_success")
                                 .replace("{clan}", MSG.color(rawClanName))));
+                        if (config.getBoolean("clan.creation-announcement.enabled", false)) {
+                            Bukkit.broadcastMessage(MSG.color(langManager.getMessageWithPrefix("user.create_announcement")
+                                .replace("{player}", playerName)
+                                .replace("{clan}", MSG.color(rawClanName))));
+                        }
                     });
 
                 } catch (IllegalArgumentException e) {
@@ -1831,7 +1874,13 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             return;
         }
 
-        plugin.getStorageProvider().setClanHome(clan, player.getLocation());
+        Location location = player.getLocation();
+        if (!isSafeClanHomeLocation(location)) {
+            player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.home_unsafe_set")));
+            return;
+        }
+
+        plugin.getStorageProvider().setClanHome(clan, location);
         player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.home_set")));
     }
 
@@ -1863,6 +1912,10 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             // Teletransporta inmediato sin delay
             Location home = plugin.getStorageProvider().getClanHome(clan);
             if (home != null) {
+                if (!canTeleportToClanHome(home)) {
+                    player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.home_unsafe_teleport")));
+                    return;
+                }
                 player.teleport(home);
                 player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.home_teleported")));
             } else {
@@ -1882,6 +1935,11 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
 
                 Location home = plugin.getStorageProvider().getClanHome(clan);
                 if (home != null) {
+                    if (!canTeleportToClanHome(home)) {
+                        player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.home_unsafe_teleport")));
+                        plugin.teleportingPlayers.remove(uuid);
+                        return;
+                    }
                     player.teleport(home);
                     player.sendMessage(MSG.color(langManager.getMessageWithPrefix("user.home_teleported")));
                 } else {
@@ -1891,6 +1949,70 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                 plugin.teleportingPlayers.remove(uuid);
             }, plugin.clanHomeDelay * 20L);
         }
+    }
+
+    private boolean canTeleportToClanHome(Location location) {
+        FileConfiguration config = plugin.getFH().getConfig();
+        if (!config.getBoolean("clan_home.safe-location-protection.enabled", true)
+            || !config.getBoolean("clan_home.safe-location-protection.check-before-teleport", true)) {
+            return true;
+        }
+        return isSafeClanHomeLocation(location);
+    }
+
+    private boolean isSafeClanHomeLocation(Location location) {
+        FileConfiguration config = plugin.getFH().getConfig();
+        if (!config.getBoolean("clan_home.safe-location-protection.enabled", true)) {
+            return true;
+        }
+        if (location == null || location.getWorld() == null) {
+            return false;
+        }
+
+        World world = location.getWorld();
+        if (location.getY() < world.getMinHeight() || location.getY() >= world.getMaxHeight() - 1) {
+            return false;
+        }
+        if (!world.getWorldBorder().isInside(location)) {
+            return false;
+        }
+
+        Material feet = location.getBlock().getType();
+        Material head = location.clone().add(0, 1, 0).getBlock().getType();
+        Material ground = location.clone().subtract(0, 1, 0).getBlock().getType();
+
+        if (config.getBoolean("clan_home.safe-location-protection.require-feet-and-head-space", true)
+            && (!isSafeSpace(feet) || !isSafeSpace(head))) {
+            return false;
+        }
+        if (config.getBoolean("clan_home.safe-location-protection.require-solid-ground", true)
+            && (!ground.isSolid() || ground == Material.AIR || ground == Material.CAVE_AIR || ground == Material.VOID_AIR)) {
+            return false;
+        }
+        if (config.getBoolean("clan_home.safe-location-protection.block-dangerous-materials", true)
+            && (isDangerous(feet) || isDangerous(head) || isDangerous(ground))) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isSafeSpace(Material material) {
+        return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR || !material.isSolid();
+    }
+
+    private boolean isDangerous(Material material) {
+        if (material == null) {
+            return true;
+        }
+        String name = material.name();
+        return name.contains("LAVA")
+            || name.contains("FIRE")
+            || name.contains("MAGMA")
+            || name.contains("CACTUS")
+            || name.contains("SWEET_BERRY_BUSH")
+            || name.contains("POWDER_SNOW")
+            || name.contains("CAMPFIRE")
+            || name.contains("WITHER_ROSE");
     }
 
 
@@ -2292,6 +2414,10 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
         return plugin.getFH().getConfig().getInt("clan-name.max-length", ClanNameHandler.DEFAULT_MAX_VISIBLE_LENGTH);
     }
 
+    private int getMinClanNameLength() {
+        return plugin.getFH().getConfig().getInt("clan-name.min-length", 0);
+    }
+
     private boolean isClanNameAllowedByRegex(String clanName) {
         FileConfiguration config = plugin.getFH().getConfig();
         if (!config.getBoolean("clan-name.regex.enabled", false)) {
@@ -2303,6 +2429,21 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
             return Pattern.matches(regex, clanName);
         } catch (PatternSyntaxException e) {
             plugin.getLogger().warning("Invalid clan-name.regex.pattern: " + e.getMessage());
+            return true;
+        }
+    }
+
+    private boolean isClanTagAllowedByRegex(String visibleTag) {
+        FileConfiguration config = plugin.getFH().getConfig();
+        if (!config.getBoolean("clan-tag.regex.enabled", false)) {
+            return true;
+        }
+
+        String regex = config.getString("clan-tag.regex.pattern", "^[A-Za-z0-9_]+$");
+        try {
+            return Pattern.matches(regex, visibleTag);
+        } catch (PatternSyntaxException e) {
+            plugin.getLogger().warning("Invalid clan-tag.regex.pattern: " + e.getMessage());
             return true;
         }
     }
@@ -2339,15 +2480,19 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
         long seconds = totalSeconds % 60L;
 
         if (days > 0) {
-            return days + "d " + hours + "h";
+            return days + getTimeUnit("days", "d") + " " + hours + getTimeUnit("hours", "h");
         }
         if (hours > 0) {
-            return hours + "h " + minutes + "m";
+            return hours + getTimeUnit("hours", "h") + " " + minutes + getTimeUnit("minutes", "m");
         }
         if (minutes > 0) {
-            return minutes + "m " + seconds + "s";
+            return minutes + getTimeUnit("minutes", "m") + " " + seconds + getTimeUnit("seconds", "s");
         }
-        return seconds + "s";
+        return seconds + getTimeUnit("seconds", "s");
+    }
+
+    private String getTimeUnit(String key, String fallback) {
+        return plugin.getFH().getConfig().getString("time-format." + key, fallback);
     }
 
     @Override
@@ -2401,6 +2546,7 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                         completions.addAll(List.of("request", "accept", "decline", "remove", "ff"));
                     }
                     case "slots" -> completions.add("buy");
+                    case "disband" -> completions.add("confirm");
                     case "top" -> completions.addAll(List.of("kda", "points", "money", "members"));
                     case "rank" -> completions.addAll(List.of("create", "delete", "set", "perms", "list"));
                 }
@@ -2411,8 +2557,12 @@ public class CCMD implements CommandExecutor, TabCompleter, Listener {
                 String arg1 = args[1].toLowerCase();
 
                 if (arg0.equals("ally")) {
-                    if (List.of("request", "accept", "decline", "remove").contains(arg1)) {
+                    if (arg1.equals("request")) {
                         completions.addAll(VanguardClan.getInstance().getStorageProvider().getCachedClanNames());
+                    } else if (arg1.equals("accept") || arg1.equals("decline")) {
+                        completions.addAll(plugin.getStorageProvider().getPendingAlliances(playerClan));
+                    } else if (arg1.equals("remove")) {
+                        completions.addAll(plugin.getStorageProvider().getClanAlliances(playerClan));
                     } else if (arg1.equals("ff")) {
                         completions.addAll(List.of("on", "off"));
                     }

@@ -102,7 +102,7 @@ public class ClanGuiManager implements Listener {
         int safePage = clampPage(page, totalPages);
 
         String title = lang.getMessage("gui.top_list_title")
-            .replace("{metric}", metric.getKey().toUpperCase(Locale.ROOT))
+            .replace("{metric}", getMetricDisplayName(metric))
             .replace("{page}", String.valueOf(safePage))
             .replace("{pages}", String.valueOf(totalPages));
         ClanGuiHolder holder = new ClanGuiHolder(ClanGuiType.TOP_LIST, null, metric, safePage, null, null);
@@ -200,10 +200,12 @@ public class ClanGuiManager implements Listener {
         List<String> lore = new ArrayList<>();
         lore.add(lang.getMessage("gui.info_leader").replace("{leader}", safeValue(plugin.getStorageProvider().getClanLeader(clan))));
         lore.add(lang.getMessage("gui.info_founder").replace("{founder}", safeValue(plugin.getStorageProvider().getClanFounder(clan))));
-        lore.add(lang.getMessage("gui.info_privacy").replace("{privacy}", safeValue(plugin.getStorageProvider().getClanPrivacy(clan))));
+        lore.add(lang.getMessage("gui.info_privacy").replace("{privacy}", formatPrivacy(plugin.getStorageProvider().getClanPrivacy(clan))));
         lore.add(lang.getMessage("gui.info_members").replace("{members}", String.valueOf(stats.getMembers())));
         lore.add(lang.getMessage("gui.info_points").replace("{points}", String.valueOf(stats.getPoints())));
         lore.add(lang.getMessage("gui.info_money").replace("{money}", numberFormat.format(stats.getMoney())));
+        lore.add(lang.getMessage("gui.info_kills").replace("{kills}", String.valueOf(stats.getKills())));
+        lore.add(lang.getMessage("gui.info_deaths").replace("{deaths}", String.valueOf(stats.getDeaths())));
         lore.add(lang.getMessage("gui.info_kda_total").replace("{kda}", formatDecimal(stats.getTotalKda())));
         lore.add(lang.getMessage("gui.info_kda_avg").replace("{kda}", formatDecimal(stats.getAverageKda())));
 
@@ -342,7 +344,7 @@ public class ClanGuiManager implements Listener {
         inv.setItem(11, createItem(Material.NAME_TAG, lang.getMessage("gui.item_edit_name"), null));
         inv.setItem(13, createItem(Material.PAPER, lang.getMessage("gui.item_edit_tag"), null));
         inv.setItem(15, createItem(Material.LEVER, lang.getMessage("gui.item_edit_privacy")
-            .replace("{privacy}", safeValue(privacy)), null));
+            .replace("{privacy}", formatPrivacy(privacy)), null));
         inv.setItem(26, createItem(Material.BARRIER, lang.getMessage("gui.item_back"), null));
 
         fill(inv);
@@ -750,7 +752,7 @@ public class ClanGuiManager implements Listener {
                     plugin.getStorageProvider().reloadCache();
                     Bukkit.getScheduler().runTask(plugin, () -> {
                         player.sendMessage(MSG.color(lang.getMessageWithPrefix("user.edit_privacy_success")
-                            .replace("{privacy}", next)));
+                            .replace("{privacy}", formatPrivacy(next))));
                         openEditMenu(player, clan);
                     });
                 } catch (Exception e) {
@@ -1127,6 +1129,13 @@ public class ClanGuiManager implements Listener {
         return numberFormat.format(value);
     }
 
+    private String getMetricDisplayName(TopMetric metric) {
+        if (metric == null) {
+            return "";
+        }
+        return lang.getMessage("gui.top_metric_" + metric.getKey());
+    }
+
     private String resolveClanName(String clanName) {
         if (clanName == null || clanName.trim().isEmpty()) {
             return clanName;
@@ -1182,7 +1191,7 @@ public class ClanGuiManager implements Listener {
         } else {
             lore.add(lang.getMessage("user.slots_no_more_upgrades"));
         }
-        lore.add("&eClick: /clan slots buy");
+        lore.add(lang.getMessage("gui.slots_buy_click"));
 
         return createItem(Material.CHEST, lang.getMessage("gui.item_slots"), lore);
     }
@@ -1232,7 +1241,11 @@ public class ClanGuiManager implements Listener {
 
     private String formatRole(String role) {
         if (role == null || role.trim().isEmpty()) {
-            return ClanRoleManager.ROLE_MEMBER;
+            return getConfiguredRoleLabel(ClanRoleManager.ROLE_MEMBER);
+        }
+        String configured = getConfiguredRoleLabel(role);
+        if (configured != null) {
+            return configured;
         }
         String[] parts = role.split("-");
         StringBuilder builder = new StringBuilder();
@@ -1247,6 +1260,24 @@ public class ClanGuiManager implements Listener {
             builder.append(" ");
         }
         return builder.toString().trim();
+    }
+
+    private String getConfiguredRoleLabel(String role) {
+        if (role == null || role.trim().isEmpty()) {
+            return null;
+        }
+        String key = role.toLowerCase(Locale.ROOT);
+        String label = plugin.getFH().getConfig().getString("gui.role-labels." + key);
+        return label == null || label.trim().isEmpty() ? null : label;
+    }
+
+    private String formatPrivacy(String privacy) {
+        if (privacy == null || privacy.trim().isEmpty()) {
+            return safeValue(privacy);
+        }
+        String key = privacy.toLowerCase(Locale.ROOT);
+        String label = plugin.getFH().getConfig().getString("gui.privacy." + key);
+        return label == null || label.trim().isEmpty() ? privacy : label;
     }
 
     private boolean isReservedRole(String role) {

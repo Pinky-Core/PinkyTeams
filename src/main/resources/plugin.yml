@@ -8,6 +8,7 @@ softdepend: [Vault, PlaceholderAPI, TAB]
 commands:
   clan:
     description: Comandos principales de los clanes.
+    aliases: [klan]
   clanadmin:
     description: Administra el plugin VanguardClans.
   scstats:

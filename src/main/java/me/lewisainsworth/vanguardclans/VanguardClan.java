@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.World;
@@ -40,6 +41,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -75,6 +78,7 @@ public class VanguardClan extends JavaPlugin {
    public Set<UUID> teleportingPlayers = new HashSet<>();
    public Map<UUID, Long> homeCooldowns = new HashMap<>();
    private final Set<UUID> clanChatToggled = new HashSet<>();
+   private final Set<String> registeredClanCustomCommands = new HashSet<>();
    public int clanHomeCooldown;
    public int clanHomeDelay;
    
@@ -276,38 +280,120 @@ public class VanguardClan extends JavaPlugin {
    }
 
    private void registerClanAliases(PluginCommand clanCommand) {
-      List<String> aliases = getConfig().getStringList("commands.clan-aliases");
-      if (aliases == null || aliases.isEmpty()) {
+      List<String> aliases = getConfiguredClanCommandAliases();
+      unregisterClanCustomCommands();
+      if (aliases.isEmpty()) {
          return;
       }
 
       clanCommand.setAliases(aliases);
       try {
-         java.lang.reflect.Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-         commandMapField.setAccessible(true);
-         Object commandMap = commandMapField.get(Bukkit.getServer());
-         java.lang.reflect.Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
-         knownCommandsField.setAccessible(true);
-
-         @SuppressWarnings("unchecked")
-         Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+         CommandMap commandMap = getCommandMap();
+         Map<String, Command> knownCommands = getKnownCommands(commandMap);
          for (String alias : aliases) {
             if (alias == null || alias.trim().isEmpty()) {
                continue;
             }
 
             String normalized = alias.trim().toLowerCase(Locale.ROOT);
-            Command existing = knownCommands.get(normalized);
-            if (existing != null && existing != clanCommand) {
-               getLogger().warning("Cannot register /" + normalized + " as clan alias because another command already uses it.");
+            if ("clan".equals(normalized)) {
                continue;
             }
 
-            knownCommands.put(normalized, clanCommand);
-            knownCommands.put(getName().toLowerCase(Locale.ROOT) + ":" + normalized, clanCommand);
+            Command existing = knownCommands.get(normalized);
+            if (existing != null && existing != clanCommand && !(existing instanceof ClanCustomCommand)) {
+               getLogger().warning("Cannot register /" + normalized + " as clan custom command because another command already uses it.");
+               continue;
+            }
+
+            ClanCustomCommand customCommand = new ClanCustomCommand(normalized, clanCommand);
+            commandMap.register(getName().toLowerCase(Locale.ROOT), customCommand);
+            knownCommands.put(normalized, customCommand);
+            knownCommands.put(getName().toLowerCase(Locale.ROOT) + ":" + normalized, customCommand);
+            registeredClanCustomCommands.add(normalized);
          }
       } catch (ReflectiveOperationException e) {
-         getLogger().warning("Could not register runtime clan aliases: " + e.getMessage());
+         getLogger().warning("Could not register clan custom commands: " + e.getMessage());
+      }
+   }
+
+   private List<String> getConfiguredClanCommandAliases() {
+      Set<String> aliases = new HashSet<>();
+      aliases.addAll(getConfig().getStringList("commands.clan-aliases"));
+
+      List<String> normalized = new ArrayList<>();
+      for (String alias : aliases) {
+         if (alias == null || alias.trim().isEmpty()) {
+            continue;
+         }
+         String clean = alias.trim().toLowerCase(Locale.ROOT);
+         if (clean.startsWith("/")) {
+            clean = clean.substring(1);
+         }
+         if (!clean.isEmpty() && !normalized.contains(clean)) {
+            normalized.add(clean);
+         }
+      }
+      return normalized;
+   }
+
+   private void unregisterClanCustomCommands() {
+      if (registeredClanCustomCommands.isEmpty()) {
+         return;
+      }
+      try {
+         Map<String, Command> knownCommands = getKnownCommands(getCommandMap());
+         for (String alias : registeredClanCustomCommands) {
+            Command command = knownCommands.get(alias);
+            if (command instanceof ClanCustomCommand) {
+               knownCommands.remove(alias);
+            }
+            String namespaced = getName().toLowerCase(Locale.ROOT) + ":" + alias;
+            command = knownCommands.get(namespaced);
+            if (command instanceof ClanCustomCommand) {
+               knownCommands.remove(namespaced);
+            }
+         }
+      } catch (ReflectiveOperationException e) {
+         getLogger().warning("Could not unregister previous clan custom commands: " + e.getMessage());
+      }
+      registeredClanCustomCommands.clear();
+   }
+
+   private CommandMap getCommandMap() throws ReflectiveOperationException {
+      java.lang.reflect.Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+      commandMapField.setAccessible(true);
+      return (CommandMap) commandMapField.get(Bukkit.getServer());
+   }
+
+   @SuppressWarnings("unchecked")
+   private Map<String, Command> getKnownCommands(CommandMap commandMap) throws ReflectiveOperationException {
+      java.lang.reflect.Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
+      knownCommandsField.setAccessible(true);
+      return (Map<String, Command>) knownCommandsField.get(commandMap);
+   }
+
+   private final class ClanCustomCommand extends Command {
+      private final PluginCommand clanCommand;
+
+      private ClanCustomCommand(String name, PluginCommand clanCommand) {
+         super(name);
+         this.clanCommand = clanCommand;
+         setDescription("Custom command for VanguardClans /clan.");
+         setUsage("/" + name + " <subcommand>");
+      }
+
+      @Override
+      public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+         return ccCmd != null && ccCmd.onCommand(sender, clanCommand, commandLabel, args);
+      }
+
+      @Override
+      public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+         if (ccCmd == null) {
+            return Collections.emptyList();
+         }
+         return ccCmd.onTabComplete(sender, clanCommand, alias, args);
       }
    }
 

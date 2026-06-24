@@ -904,9 +904,13 @@ public class YamlStorageProvider extends AbstractStorageProvider {
         lock.readLock().lock();
         try {
             List<String> pending = new ArrayList<>();
-            ConfigurationSection pendingSection = data.getConfigurationSection("pending_alliances." + clanName);
+            ConfigurationSection pendingSection = data.getConfigurationSection("pending_alliances");
             if (pendingSection != null) {
-                pending.addAll(pendingSection.getKeys(false));
+                for (String requester : pendingSection.getKeys(false)) {
+                    if (data.contains("pending_alliances." + requester + "." + clanName)) {
+                        pending.add(requester);
+                    }
+                }
             }
             return pending;
         } finally {

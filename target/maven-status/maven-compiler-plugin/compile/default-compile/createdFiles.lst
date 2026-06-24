@@ -25,6 +25,7 @@ me\lewisainsworth\vanguardclans\Utils\Metrics$JsonObjectBuilder.class
 me\lewisainsworth\vanguardclans\Utils\ClanTopCalculator.class
 me\lewisainsworth\vanguardclans\Utils\ClanNameHandler.class
 me\lewisainsworth\vanguardclans\Database\StorageProvider.class
+me\lewisainsworth\vanguardclans\VanguardClan$ClanCustomCommand.class
 me\lewisainsworth\vanguardclans\integration\DiscordNotifier.class
 me\lewisainsworth\vanguardclans\Utils\ClanTopEntry.class
 me\lewisainsworth\vanguardclans\VanguardClan.class

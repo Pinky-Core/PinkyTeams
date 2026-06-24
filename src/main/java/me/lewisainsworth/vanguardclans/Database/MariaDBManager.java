@@ -813,10 +813,9 @@ public class MariaDBManager extends AbstractStorageProvider {
         // Implementation for MariaDB
         List<String> pendingAlliances = new ArrayList<>();
         try (Connection con = getConnection()) {
-            String sql = "SELECT clan2 FROM pending_alliances WHERE clan1 = ? UNION SELECT clan1 FROM pending_alliances WHERE clan2 = ?";
+            String sql = "SELECT clan1 FROM pending_alliances WHERE clan2 = ?";
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setString(1, clanName);
-                ps.setString(2, clanName);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         pendingAlliances.add(rs.getString(1));

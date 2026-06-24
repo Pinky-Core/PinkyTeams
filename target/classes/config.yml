@@ -8,6 +8,8 @@
 #  | %vanguardclans_clan_name%            : Clan name                    |  #
 #  | %vanguardclans_clan_tag%             : Clan tag                     |  #
 #  | %vanguardclans_clan_money%           : Clan vault                   |  #
+#  | %vanguardclans_clan_kills%           : Total clan kills             |  #
+#  | %vanguardclans_clan_deaths%          : Total clan deaths            |  #
 #  | %vanguardclans_clan_membercount_offline% : Offline members          |  #
 #  | %vanguardclans_clan_membercount_online%  : Online Members           |  #
 #  | %vanguardclans_clan_membercount%     : Total of members             |  #
@@ -34,8 +36,15 @@ commands:
   # When false, /clan without arguments will return a "Command not found" message.
   show-main-help-page: true
   # Extra aliases for /clan. Example for Turkish servers: /klan
+  # Every alias executes the same subcommands as /clan.
   clan-aliases:
     - "klan"
+
+time-format:
+  days: "d"
+  hours: "h"
+  minutes: "m"
+  seconds: "s"
 
 storage:
   # Storage type: mariadb, mysql, h2, sqlite, yaml
@@ -98,10 +107,20 @@ welcome-message:
 clan_home:
   cooldown: 30 
   teleport_delay: 5 
+  safe-location-protection:
+    enabled: true
+    check-before-teleport: true
+    require-solid-ground: true
+    require-feet-and-head-space: true
+    block-dangerous-materials: true 
 
 
 clan:
   default-privacy: "private" # default privacy for newly created clans (public/private)
+  creation-announcement:
+    enabled: false
+  disband-confirmation:
+    enabled: true
 
 nametag-privacy:
   enabled: false
@@ -169,6 +188,7 @@ gui:
 
 clan-name:
   # Charact. limitations for clan names (0 = unlimited)
+  min-length: 0
   max-length: 16
   regex:
     enabled: false
@@ -182,9 +202,17 @@ clan-name:
       enabled: false
       amount: 1000
 
+clan-tag:
+  regex:
+    enabled: false
+    # Applies to the visible tag/name after color codes are stripped.
+    pattern: "^[A-Za-z0-9_]+$"
+
 economy:
   enabled: true
   system: "Vault" # Vault / Internal (VanguardClans economy system)
+  bank:
+    max-balance: 0 # 0 = unlimited
 
   cost:
     create-clan: 1000

@@ -1,5 +1,5 @@
 main: me.lewisainsworth.vanguardclans.VanguardClan
-version: 1.6.0
+version: 1.6.1
 name: VanguardClans
 author: Lewis_Ainsworth
 api-version: "1.20"
@@ -8,6 +8,7 @@ softdepend: [Vault, PlaceholderAPI, TAB]
 commands:
   clan:
     description: Comandos principales de los clanes.
+    aliases: [klan]
   clanadmin:
     description: Administra el plugin VanguardClans.
   scstats:

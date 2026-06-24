@@ -102,6 +102,12 @@ public class PAPI extends PlaceholderExpansion implements Relational {
                 double money = plugin.getStorageProvider().getClanMoney(clanName);
                 return String.valueOf(money);
 
+            case "clan_kills":
+                return String.valueOf(getClanKills(clanName));
+
+            case "clan_deaths":
+                return String.valueOf(getClanDeaths(clanName));
+
             case "clan_membercount":
                 int memberCount = plugin.getStorageProvider().getClanMemberCount(clanName);
                 return String.valueOf(memberCount);
@@ -131,6 +137,22 @@ public class PAPI extends PlaceholderExpansion implements Relational {
             default:
                 return "&c&lVanguard&6&lClans";
         }
+    }
+
+    private int getClanKills(String clanName) {
+        int kills = 0;
+        for (String member : plugin.getStorageProvider().getClanMembers(clanName)) {
+            kills += plugin.getStorageProvider().getPlayerKills(member);
+        }
+        return kills;
+    }
+
+    private int getClanDeaths(String clanName) {
+        int deaths = 0;
+        for (String member : plugin.getStorageProvider().getClanMembers(clanName)) {
+            deaths += plugin.getStorageProvider().getPlayerDeaths(member);
+        }
+        return deaths;
     }
 
     /**

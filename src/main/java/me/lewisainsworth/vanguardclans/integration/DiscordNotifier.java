@@ -114,11 +114,18 @@ public class DiscordNotifier {
         String template = section.getString("message", "**{clan}** is now #1 in {metric} with {value}.");
         Map<String, String> tokens = new HashMap<>();
         tokens.put("clan", entry.getClanName());
-        tokens.put("metric", metric.getKey().toUpperCase(Locale.ROOT));
+        tokens.put("metric", getMetricDisplayName(metric));
         tokens.put("value", formatMetricValue(entry, metric));
         tokens.put("leader", plugin.getStorageProvider().getClanLeader(entry.getClanName()));
         String description = format(template, tokens);
-        sendEmbed(webhookUrl, "Top " + metric.getKey(), description, color);
+        sendEmbed(webhookUrl, "Top " + getMetricDisplayName(metric), description, color);
+    }
+
+    private String getMetricDisplayName(TopMetric metric) {
+        if (metric == null) {
+            return "";
+        }
+        return plugin.getLangManager().getMessage("gui.top_metric_" + metric.getKey());
     }
 
     private String formatMetricValue(ClanTopEntry entry, TopMetric metric) {

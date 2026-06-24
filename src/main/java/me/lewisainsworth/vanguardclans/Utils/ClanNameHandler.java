@@ -14,12 +14,14 @@ import me.lewisainsworth.vanguardclans.Utils.MSG;
 public class ClanNameHandler {
 
     public static final int DEFAULT_MAX_VISIBLE_LENGTH = 16;
+    private static final Pattern BUNGEE_HEX_PATTERN = Pattern.compile("(?i)&x(&[a-f0-9]){6}");
     private static final Pattern HEX_PATTERN = Pattern.compile("(?i)&(#?[a-f0-9]{6})");
     private static final Pattern FORMAT_CODES = Pattern.compile("(?i)&[0-9a-fk-or]");
 
     public static String getVisibleName(String raw) {
         if (raw == null) return "";
-        String noHex = HEX_PATTERN.matcher(raw).replaceAll("");
+        String noBungeeHex = BUNGEE_HEX_PATTERN.matcher(raw).replaceAll("");
+        String noHex = HEX_PATTERN.matcher(noBungeeHex).replaceAll("");
         return FORMAT_CODES.matcher(noHex).replaceAll("");
     }
 

@@ -1028,11 +1028,13 @@ public class H2StorageProvider extends AbstractStorageProvider {
     protected List<String> getClanAlliancesImpl(String clanName) throws Exception {
         List<String> alliances = new ArrayList<>();
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement("SELECT clan2 FROM alliances WHERE clan1 = ?")) {
+             PreparedStatement ps = con.prepareStatement("SELECT CASE WHEN clan1 = ? THEN clan2 ELSE clan1 END AS ally FROM alliances WHERE clan1 = ? OR clan2 = ?")) {
             ps.setString(1, clanName);
+            ps.setString(2, clanName);
+            ps.setString(3, clanName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                alliances.add(rs.getString("clan2"));
+                alliances.add(rs.getString("ally"));
             }
         }
         return alliances;
@@ -1147,11 +1149,11 @@ public class H2StorageProvider extends AbstractStorageProvider {
     protected List<String> getPendingAlliancesImpl(String clanName) throws Exception {
         List<String> pending = new ArrayList<>();
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement("SELECT clan2 FROM pending_alliances WHERE clan1 = ?")) {
+             PreparedStatement ps = con.prepareStatement("SELECT clan1 FROM pending_alliances WHERE clan2 = ?")) {
             ps.setString(1, clanName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                pending.add(rs.getString("clan2"));
+                pending.add(rs.getString("clan1"));
             }
         }
         return pending;
