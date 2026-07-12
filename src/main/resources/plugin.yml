@@ -1,7 +1,7 @@
-main: me.lewisainsworth.vanguardclans.VanguardClan
+main: me.pinkycore.pinkyteams.PinkyTeams
 version: ${project.version}
-name: VanguardClans
-author: Lewis_Ainsworth
+name: PinkyTeams
+author: PinkyCore
 api-version: "1.20"
 softdepend: [Vault, PlaceholderAPI, TAB]
 
@@ -10,113 +10,218 @@ commands:
     description: Comandos principales de los clanes.
     aliases: [klan]
   clanadmin:
-    description: Administra el plugin VanguardClans.
+    description: Administra el plugin PinkyTeams.
   scstats:
     description: Muestra estadísticas del jugador.
 
 permissions:
-  vanguardclans.admin:
+  pinkyteams.*:
+    description: Acceso completo a PinkyTeams.
+    default: false
+    children:
+      pinkyteams.admin: true
+      pinkyteams.user: true
+      pinkyteams.bypass.homecooldown: true
+      pinkyteams.bypass.homedelay: true
+      pinkyteams.bypass.nametag: true
+
+  pinkyteams.admin:
     description: Acceso a comandos administrativos.
     default: op
+    children:
+      pinkyteams.admin.nametagreset: true
+
+  pinkyteams.user:
+    description: Acceso a todos los comandos de usuario.
+    default: false
+    children:
+      pinkyteams.user.create: true
+      pinkyteams.user.sethome: true
+      pinkyteams.user.delhome: true
+      pinkyteams.user.home: true
+      pinkyteams.user.list: true
+      pinkyteams.user.info: true
+      pinkyteams.user.join: true
+      pinkyteams.user.leave: true
+      pinkyteams.user.disband: true
+      pinkyteams.user.kick: true
+      pinkyteams.user.ally: true
+      pinkyteams.user.ff: true
+      pinkyteams.user.chat: true
+      pinkyteams.user.stats: true
+      pinkyteams.user.invite: true
+      pinkyteams.user.economy: true
+      pinkyteams.user.slots: true
+      pinkyteams.user.top: true
+      pinkyteams.user.rank: true
+      pinkyteams.user.accept: true
+      pinkyteams.user.decline: true
+      pinkyteams.user.resign: true
+      pinkyteams.user.report: true
+      pinkyteams.user.edit: true
+      pinkyteams.user.war: true
 
   # Permisos específicos para comandos/clanes
-  vanguardclans.user.create:
+  pinkyteams.user.create:
     description: Permiso para crear un clan.
     default: false
 
-  vanguardclans.user.sethome:
+  pinkyteams.user.sethome:
     description: Permiso para ir a la home.
     default: false
 
-  vanguardclans.user.delhome:
+  pinkyteams.user.delhome:
     description: Permiso para borrar la home del clan.
     default: false
 
-  vanguardclans.user.home:
+  pinkyteams.user.home:
     description: Permiso para home.
     default: false
 
-  vanguardclans.bypass.homecooldown:
+  pinkyteams.bypass.homecooldown:
     default: op
 
-  vanguardclans.bypass.homedelay:
+  pinkyteams.bypass.homedelay:
     default: op
 
-  vanguardclans.bypass.nametag:
+  pinkyteams.bypass.nametag:
     description: Allows seeing hidden nametags (privacy bypass)
     default: op
-  vanguardclans.admin.nametagreset:
+  pinkyteams.admin.nametagreset:
     description: Permite usar /clanadmin nametagreset
     default: op
 
-  vanguardclans.user.list:
+  pinkyteams.user.list:
     description: Permiso para listar clanes.
     default: false
 
-  vanguardclans.user.join:
+  pinkyteams.user.info:
+    description: Permiso para consultar información de clanes.
+    default: false
+
+  pinkyteams.user.join:
     description: Permiso para unirse a un clan.
     default: false
 
-  vanguardclans.user.leave:
+  pinkyteams.user.leave:
     description: Permiso para salir de un clan.
     default: false
 
-  vanguardclans.user.disband:
+  pinkyteams.user.disband:
     description: Permiso para disolver un clan.
     default: false
 
-  vanguardclans.user.kick:
+  pinkyteams.user.kick:
     description: Permiso para expulsar a un miembro de un clan.
     default: false
 
-  vanguardclans.user.ally:
+  pinkyteams.user.ally:
     description: Permiso para gestionar alianzas.
     default: false
 
-  vanguardclans.user.ff:
+  pinkyteams.user.ff:
     description: Permiso para configurar fuego amigo.
     default: false
 
-  vanguardclans.user.chat:
+  pinkyteams.user.chat:
     description: Permiso para usar chat de clan.
     default: false
 
-  vanguardclans.user.stats:
+  pinkyteams.user.stats:
     description: Permiso para ver estadísticas de clanes.
     default: false
 
-  vanguardclans.user.invite:
+  pinkyteams.user.invite:
     description: Permiso para invitar jugadores a un clan.
     default: false
 
-  vanguardclans.user.economy:
+  pinkyteams.user.economy:
     description: Permiso para depositar o retirar dinero del banco del clan.
     default: false
 
-  vanguardclans.user.slots:
+  pinkyteams.user.slots:
     description: Permiso para ver y mejorar los slots del clan.
     default: false
 
-  vanguardclans.user.top:
+  pinkyteams.user.top:
     description: Permiso para ver el ranking de clanes.
     default: false
 
-  vanguardclans.user.rank:
+  pinkyteams.user.rank:
     description: Permiso para gestionar rangos del clan.
     default: false
 
-  vanguardclans.user.accept:
+  pinkyteams.user.accept:
     description: Permiso para aceptar invitaciones a clanes.
     default: false
 
-  vanguardclans.user.decline:
+  pinkyteams.user.decline:
     description: Permiso para rechazar invitaciones a clanes.
     default: false
 
-  vanguardclans.user.resign:
+  pinkyteams.user.resign:
     description: Permiso para renunciar a un clan.
     default: false
 
-  vanguardclans.user.report:
+  pinkyteams.user.report:
     description: Permiso para reportar clanes.
     default: false
+
+  pinkyteams.user.edit:
+    description: Permiso para editar nombre, tag y privacidad del clan.
+    default: false
+
+  pinkyteams.user.war:
+    description: Permiso para gestionar guerras de clan.
+    default: false
+
+  # Compatibility aliases. Remove after permission groups migrate to pinkyteams.*.
+  vanguardclans.admin:
+    default: false
+    children:
+      pinkyteams.admin: true
+  vanguardclans.admin.nametagreset:
+    default: false
+    children:
+      pinkyteams.admin.nametagreset: true
+  vanguardclans.bypass.homecooldown:
+    default: false
+    children:
+      pinkyteams.bypass.homecooldown: true
+  vanguardclans.bypass.homedelay:
+    default: false
+    children:
+      pinkyteams.bypass.homedelay: true
+  vanguardclans.bypass.nametag:
+    default: false
+    children:
+      pinkyteams.bypass.nametag: true
+  vanguardclans.user:
+    default: false
+    children:
+      pinkyteams.user: true
+  vanguardclans.user.create: {default: false, children: {pinkyteams.user.create: true}}
+  vanguardclans.user.sethome: {default: false, children: {pinkyteams.user.sethome: true}}
+  vanguardclans.user.delhome: {default: false, children: {pinkyteams.user.delhome: true}}
+  vanguardclans.user.home: {default: false, children: {pinkyteams.user.home: true}}
+  vanguardclans.user.list: {default: false, children: {pinkyteams.user.list: true}}
+  vanguardclans.user.info: {default: false, children: {pinkyteams.user.info: true}}
+  vanguardclans.user.join: {default: false, children: {pinkyteams.user.join: true}}
+  vanguardclans.user.leave: {default: false, children: {pinkyteams.user.leave: true}}
+  vanguardclans.user.disband: {default: false, children: {pinkyteams.user.disband: true}}
+  vanguardclans.user.kick: {default: false, children: {pinkyteams.user.kick: true}}
+  vanguardclans.user.ally: {default: false, children: {pinkyteams.user.ally: true}}
+  vanguardclans.user.ff: {default: false, children: {pinkyteams.user.ff: true}}
+  vanguardclans.user.chat: {default: false, children: {pinkyteams.user.chat: true}}
+  vanguardclans.user.stats: {default: false, children: {pinkyteams.user.stats: true}}
+  vanguardclans.user.invite: {default: false, children: {pinkyteams.user.invite: true}}
+  vanguardclans.user.economy: {default: false, children: {pinkyteams.user.economy: true}}
+  vanguardclans.user.slots: {default: false, children: {pinkyteams.user.slots: true}}
+  vanguardclans.user.top: {default: false, children: {pinkyteams.user.top: true}}
+  vanguardclans.user.rank: {default: false, children: {pinkyteams.user.rank: true}}
+  vanguardclans.user.accept: {default: false, children: {pinkyteams.user.accept: true}}
+  vanguardclans.user.decline: {default: false, children: {pinkyteams.user.decline: true}}
+  vanguardclans.user.resign: {default: false, children: {pinkyteams.user.resign: true}}
+  vanguardclans.user.report: {default: false, children: {pinkyteams.user.report: true}}
+  vanguardclans.user.edit: {default: false, children: {pinkyteams.user.edit: true}}
+  vanguardclans.user.war: {default: false, children: {pinkyteams.user.war: true}}

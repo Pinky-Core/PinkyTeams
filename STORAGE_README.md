@@ -1,25 +1,25 @@
-# VanguardClans Multi-Storage System
+# PinkyTeams Multi-Storage System
 
 ## Overview
 
-VanguardClans now supports multiple storage backends, allowing you to choose the most suitable option for your server setup.
+PinkyTeams now supports multiple storage backends, allowing you to choose the most suitable option for your server setup.
 
 ## Supported Storage Types
 
 ### 1. YAML (Default)
-- **File**: `plugins/VanguardClans/clans_data.yml`
+- **File**: `plugins/PinkyTeams/clans_data.yml`
 - **Pros**: No database setup required, easy to backup, human-readable
 - **Cons**: Slower for large datasets, not suitable for high-traffic servers
 - **Best for**: Small servers, testing, development
 
 ### 2. H2 Database
-- **File**: `plugins/VanguardClans/clans.h2.db`
+- **File**: `plugins/PinkyTeams/clans.h2.db`
 - **Pros**: Fast, embedded database, no external setup required
 - **Cons**: Single-file database, limited concurrent connections
 - **Best for**: Medium-sized servers, when you want SQL features without external database
 
 ### 3. SQLite
-- **File**: `plugins/VanguardClans/clans.db`
+- **File**: `plugins/PinkyTeams/clans.db`
 - **Pros**: Lightweight, reliable, widely supported
 - **Cons**: Limited concurrent writes, not suitable for high-traffic servers
 - **Best for**: Small to medium servers, when you need reliability
@@ -38,7 +38,7 @@ VanguardClans now supports multiple storage backends, allowing you to choose the
 
 ## Configuration
 
-Edit `plugins/VanguardClans/config.yml`:
+Edit `plugins/PinkyTeams/config.yml`:
 
 ```yaml
 storage:
@@ -100,7 +100,7 @@ The plugin automatically handles data migration between storage types. When you 
 ## Backup and Restore
 
 ### YAML Storage
-- Backup: Copy `plugins/VanguardClans/clans_data.yml`
+- Backup: Copy `plugins/PinkyTeams/clans_data.yml`
 - Restore: Replace the file and restart the server
 
 ### Database Storage (H2, SQLite, MySQL, MariaDB)

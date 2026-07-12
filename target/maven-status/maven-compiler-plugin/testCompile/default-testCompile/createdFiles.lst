@@ -1,0 +1,15 @@
+me\pinkycore\pinkyteams\Database\LocalStorageContractTest.class
+me\pinkycore\pinkyteams\MetadataAuditTest.class
+me\pinkycore\pinkyteams\service\ClanBankServiceTest$FakeEconomy.class
+me\pinkycore\pinkyteams\service\ClanWarServiceTest.class
+me\pinkycore\pinkyteams\service\ClanMembershipServiceTest.class
+me\pinkycore\pinkyteams\Utils\ConfigMigratorTest.class
+me\pinkycore\pinkyteams\service\PlayerIdentityServiceTest.class
+me\pinkycore\pinkyteams\CMDs\ClanHomeCommandTest.class
+me\pinkycore\pinkyteams\service\ClanAllianceServiceTest.class
+me\pinkycore\pinkyteams\service\BankAuditServiceTest.class
+me\pinkycore\pinkyteams\Utils\LegacyDataMigratorTest.class
+me\pinkycore\pinkyteams\service\ClanSlotServiceTest.class
+me\pinkycore\pinkyteams\service\ClanBankServiceTest.class
+me\pinkycore\pinkyteams\service\ClanSeasonServiceTest.class
+me\pinkycore\pinkyteams\service\ClanBankServiceTest$FakeStore.class

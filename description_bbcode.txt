@@ -1,65 +1,95 @@
-[CENTER][SIZE=6][B]VanguardClans | Advanced Clan System for Spigot[/B][/SIZE]
-[SIZE=4]Create, manage, and grow legendary clans with GUI dashboards, privacy controls, leaderboards, and full localization.[/SIZE]
-[SIZE=3][I]YAML • SQLite • MariaDB • Multilingual • PlaceholderAPI • TAB/UnlimitedNametags • Discord Webhooks • Anti-multiaccount[/I][/SIZE]
+[CENTER]
+[SIZE=7][COLOR=#ff69b4][B]PinkyTeams[/B][/COLOR][/SIZE]
+[SIZE=5][B]Advanced Teams & Clans System[/B][/SIZE]
+[SIZE=4]Build communities, compete in seasons, fight clan wars and manage everything from a modern pink dashboard.[/SIZE]
+
+[COLOR=#ff69b4][B]Version 1.8.0 • Made by PinkyCore[/B][/COLOR]
+[I]Spigot/Paper 1.20+ • Java 17+ • English & Spanish[/I]
 
 [IMG]https://i.imgur.com/hRABm91.png[/IMG]
-[SIZE=5][B]Installation[/B][/SIZE]
-[LIST=1]
-[ *]Download the latest build of VanguardClans.
-[ *]Drop [ICODE]VanguardClans.jar[/ICODE] inside your [ICODE]/plugins[/ICODE] folder.
-[ *]Edit [ICODE]config.yml[/ICODE] to pick storage (YAML/SQLite/MariaDB), nametag provider (internal/TAB/UnlimitedNametags), webhook targets, and anti-multiaccount limits.
-[ *]Restart your server or run [ICODE]/clanadmin reload[/ICODE] and let the plugin generate defaults.
-[ *]Optional: install PlaceholderAPI, TAB/UnlimitedNametags, and choose your language with [ICODE]/clanadmin lang select <code>[/ICODE].
-[/LIST]
+
+[SIZE=6][COLOR=#ff69b4][B]Why PinkyTeams?[/B][/COLOR][/SIZE]
+PinkyTeams is a complete, configurable clan system designed for survival, PvP and network servers. It combines everyday clan management with wars, persistent seasons, rankings, economy, custom roles, alliances, PlaceholderAPI and five storage engines.
+
+[TABLE]
+[TR][TD][B]Clan management[/B][/TD][TD]Creation, invitations, public/private access, custom tags, homes and leadership tools[/TD][/TR]
+[TR][TD][B]Competition[/B][/TD][TD]Clan wars, kill scoring, anti-farming, timed matches, seasons and historical rankings[/TD][/TR]
+[TR][TD][B]Economy[/B][/TD][TD]Vault or internal economy, clan bank, atomic deposits/withdrawals and persistent audit history[/TD][/TR]
+[TR][TD][B]Customization[/B][/TD][TD]Editable languages, pink GUI theme, materials, slots, sounds, permissions and messages[/TD][/TR]
+[TR][TD][B]Storage[/B][/TD][TD]YAML, SQLite, H2, MySQL and MariaDB[/TD][/TR]
+[/TABLE]
 
 [IMG]https://i.imgur.com/UzuEmHU.png[/IMG]
 
-[SIZE=5][B]⚙️ Requirements[/B][/SIZE]
+[SIZE=6][COLOR=#ff69b4][B]Main Features[/B][/COLOR][/SIZE]
+[/CENTER]
 [LIST]
-[ *]Paper or Spigot 1.20+ (any Bukkit-compatible fork) running on Java 17+.
-[ *]Optional PlaceholderAPI for placeholders and TAB/UnlimitedNametags for advanced nametag privacy.
-[ *]Scale as needed: lightweight YAML for small servers or SQLite/MariaDB pools for large networks with cloud-ready configs.
+[*][B]Modern 54-slot clan dashboard[/B] with a live clan overview, members, invitations, alliances, bank, wars, home, rankings, roles and upgrades.
+[*][B]Fully configurable GUI:[/B] change the pink filler, materials, positions and navigation sounds from [ICODE]config.yml[/ICODE].
+[*][B]Persistent clan wars[/B] with requests, accept/decline, surrender, timers, kill scores, rewards and repeated-kill anti-farming.
+[*][B]Season system[/B] with automatic or manual closure, point rankings, optional point resets, reward commands and historical snapshots.
+[*][B]Clan economy[/B] with Vault/internal support, configurable limits, verified rollbacks and a persistent bank transaction log.
+[*][B]Custom clan roles[/B] with assignable permissions, member management and in-game GUI controls.
+[*][B]Alliances and friendly fire[/B] with requests, relationship controls and independent ally FF settings.
+[*][B]Clan homes[/B] with configurable teleport delay, cooldowns and bypass permissions.
+[*][B]Rankings[/B] for points, KDA, money and members, available through commands, GUI and PlaceholderAPI.
+[*][B]Nametag privacy[/B] through the internal scoreboard, TAB or UnlimitedNametags-style integration modes.
+[*][B]English and Spanish[/B] included, with editable YAML language files and runtime language selection.
+[*][B]Discord webhooks[/B] for clan creation and leaderboard changes.
+[*][B]UUID identity tracking[/B] that safely migrates memberships, leadership, invitations and statistics after name changes.
+[*][B]Automatic VanguardClans migration[/B] with legacy permission and placeholder compatibility during the transition.
+[*][B]Public API and Bukkit events[/B] for developers integrating creation, disband, membership and alliance activity.
+[*]Shared ranking cache and asynchronous storage queries for better server performance.
 [/LIST]
 
+[CENTER][IMG]https://i.imgur.com/CIjBXfS.png[/IMG]
+[SIZE=6][COLOR=#ff69b4][B]Commands[/B][/COLOR][/SIZE][/CENTER]
 
-[IMG]https://i.imgur.com/CIjBXfS.png[/IMG]
-
-[SIZE=5][B]⌨️ Player Commands[/B][/SIZE]
-[SPOILER="Show Player Commands"]
-[ICODE]/clan help [page][/ICODE] — opens the GUI or text help board.
-[ICODE]/clan info [clan][/ICODE] — shows clan members, ranks, KDA, points, vault, and relations.
-[ICODE]/clan create <name>[/ICODE]
-[ICODE]/clan invite <player>[/ICODE]
-[ICODE]/clan join <clan>[/ICODE]
-[ICODE]/clan leave[/ICODE]
-[ICODE]/clan kick <player>[/ICODE]
-[ICODE]/clan resign[/ICODE]
-[ICODE]/clan disband[/ICODE]
-[ICODE]/clan edit name <newname>[/ICODE]
-[ICODE]/clan edit privacy <public/private>[/ICODE]
-[ICODE]/clan sethome[/ICODE] / [ICODE]/clan home[/ICODE] / [ICODE]/clan delhome[/ICODE]
-[ICODE]/clan chat <message>[/ICODE] / [ICODE]/clan chat[/ICODE]
-[ICODE]/clan stats [clan][/ICODE]
-[ICODE]/clan list[/ICODE]
+[SPOILER="Player Commands"]
+[ICODE]/clan[/ICODE] or [ICODE]/clan menu[/ICODE] — open the clan dashboard
+[ICODE]/clan help [page][/ICODE] — view command help
+[ICODE]/clan create <name>[/ICODE] — create a clan
+[ICODE]/clan info [clan][/ICODE] — view clan information
+[ICODE]/clan list[/ICODE] — list available clans
+[ICODE]/clan invite <player>[/ICODE] — invite a player
+[ICODE]/clan join <clan>[/ICODE] or [ICODE]/clan accept <clan>[/ICODE] — accept an invitation
+[ICODE]/clan decline <clan>[/ICODE] — decline an invitation
+[ICODE]/clan leave[/ICODE] — leave your clan
+[ICODE]/clan kick <player>[/ICODE] — remove a member
+[ICODE]/clan resign[/ICODE] — transfer/leave leadership
+[ICODE]/clan disband[/ICODE] — disband the clan
+[ICODE]/clan edit name <name>[/ICODE] — rename the clan
+[ICODE]/clan edit tag <tag>[/ICODE] — change its visible tag
+[ICODE]/clan edit privacy <public|private>[/ICODE] — change access mode
+[ICODE]/clan sethome[/ICODE], [ICODE]/clan home[/ICODE], [ICODE]/clan delhome[/ICODE]
+[ICODE]/clan chat [message][/ICODE] — use or toggle clan chat
+[ICODE]/clan stats [clan][/ICODE] — view statistics
 [ICODE]/clan top <kda|points|money|members> [page][/ICODE]
-[ICODE]/clan ff <on/off>[/ICODE]
-[ICODE]/clan ally request/accept/decline/remove/ff[/ICODE]
-[ICODE]/clan slots[/ICODE] / [ICODE]/clan slots buy[/ICODE]
-[ICODE]/clan economy[/ICODE] / [ICODE]/clan economy deposit <amount>[/ICODE] / [ICODE]/clan economy withdraw <amount>[/ICODE]
+[ICODE]/clan rank ...[/ICODE] — manage custom ranks and permissions
+[ICODE]/clan ally <request|accept|decline|remove|ff> ...[/ICODE]
+[ICODE]/clan ff <on|off>[/ICODE] — configure clan friendly fire
+[ICODE]/clan war <request|accept|decline|status|surrender> ...[/ICODE]
+[ICODE]/clan economy[/ICODE] — view the bank
+[ICODE]/clan economy deposit <amount>[/ICODE]
+[ICODE]/clan economy withdraw <amount>[/ICODE]
+[ICODE]/clan economy history[/ICODE] — view audited transactions
+[ICODE]/clan slots[/ICODE] and [ICODE]/clan slots buy[/ICODE]
 [ICODE]/clan report <clan> <reason>[/ICODE]
-[CODE]…plus tab completions for stats, invites, and allies.[/CODE]
 [/SPOILER]
 
-[SIZE=5][B]🛠️ Admin Commands[/B][/SIZE]
-[SPOILER="Show Admin Commands"]
-[ICODE]/clanadmin reload[/ICODE]
-[ICODE]/clanadmin reports[/ICODE]
+[SPOILER="Administrator Commands"]
+[ICODE]/clanadmin info[/ICODE] — plugin information and author
+[ICODE]/clanadmin reload[/ICODE] — reload configuration and languages
+[ICODE]/clanadmin reports[/ICODE] — review clan reports
 [ICODE]/clanadmin ban <clan> [reason][/ICODE]
 [ICODE]/clanadmin unban <clan>[/ICODE]
 [ICODE]/clanadmin clear[/ICODE]
 [ICODE]/clanadmin fix confirm[/ICODE]
 [ICODE]/clanadmin repair confirm[/ICODE]
 [ICODE]/clanadmin points <clan> <amount>[/ICODE]
+[ICODE]/clanadmin season start <name> <duration>[/ICODE]
+[ICODE]/clanadmin season end[/ICODE]
+[ICODE]/clanadmin season status[/ICODE]
 [ICODE]/clanadmin sqlstatus[/ICODE]
 [ICODE]/clanadmin lang[/ICODE]
 [ICODE]/clanadmin lang select <code>[/ICODE]
@@ -70,71 +100,98 @@
 [ICODE]/clanadmin history <player|clan>[/ICODE]
 [ICODE]/clanadmin slots reset <clan>[/ICODE]
 [ICODE]/clanadmin webhook test[/ICODE]
-[SPOILER]Migration helpers, storage repair, and cache commands keep data tidy.[/SPOILER]
 [/SPOILER]
 
-[SIZE=5][B]Permissions[/B][/SIZE]
-[SPOILER="Show Permissions"]
-[ICODE]vanguardclans.admin[/ICODE]
-[ICODE]vanguardclans.user.create[/ICODE]
-[ICODE]vanguardclans.user.info[/ICODE]
-[ICODE]vanguardclans.user.join[/ICODE]
-[ICODE]vanguardclans.user.leave[/ICODE]
-[ICODE]vanguardclans.user.disband[/ICODE]
-[ICODE]vanguardclans.user.kick[/ICODE]
-[ICODE]vanguardclans.user.sethome[/ICODE]
-[ICODE]vanguardclans.user.home[/ICODE]
-[ICODE]vanguardclans.user.delhome[/ICODE]
-[ICODE]vanguardclans.user.chat[/ICODE]
-[ICODE]vanguardclans.user.stats[/ICODE]
-[ICODE]vanguardclans.user.top[/ICODE]
-[ICODE]vanguardclans.user.slots[/ICODE]
-[ICODE]vanguardclans.user.ff[/ICODE]
-[ICODE]vanguardclans.user.ally[/ICODE]
-[ICODE]vanguardclans.user.economy[/ICODE]
-[ICODE]vanguardclans.user.report[/ICODE]
-[ICODE]vanguardclans.user.accept[/ICODE]
-[ICODE]vanguardclans.user.decline[/ICODE]
-[ICODE]vanguardclans.user.resign[/ICODE]
-[ICODE]vanguardclans.user.rank[/ICODE]
-[ICODE]vanguardclans.user.topgui[/ICODE]
-[ICODE]vanguardclans.user.invite[/ICODE]
-[ICODE]vanguardclans.user.chat.toggle[/ICODE]
-[ICODE]vanguardclans.user.nametag.bypass[/ICODE]
-[ICODE]vanguardclans.bypass.homecooldown[/ICODE]
-[ICODE]vanguardclans.bypass.homedelay[/ICODE]
-[ICODE]vanguardclans.bypass.nametag[/ICODE]
-[ICODE]vanguardclans.metrics.view[/ICODE]
-[ICODE]vanguardclans.webhook.manage[/ICODE]
-[SPOILER]Extend with custom permissions per GUI tab or clan role.[/SPOILER]
+[CENTER][SIZE=6][COLOR=#ff69b4][B]Permissions[/B][/COLOR][/SIZE][/CENTER]
+[SPOILER="Permission Nodes"]
+[ICODE]pinkyteams.*[/ICODE] — every PinkyTeams permission
+[ICODE]pinkyteams.admin[/ICODE] — administrative commands
+[ICODE]pinkyteams.admin.nametagreset[/ICODE]
+[ICODE]pinkyteams.user[/ICODE] — all player commands
+[ICODE]pinkyteams.user.create[/ICODE]
+[ICODE]pinkyteams.user.sethome[/ICODE]
+[ICODE]pinkyteams.user.delhome[/ICODE]
+[ICODE]pinkyteams.user.home[/ICODE]
+[ICODE]pinkyteams.user.list[/ICODE]
+[ICODE]pinkyteams.user.info[/ICODE]
+[ICODE]pinkyteams.user.join[/ICODE]
+[ICODE]pinkyteams.user.leave[/ICODE]
+[ICODE]pinkyteams.user.disband[/ICODE]
+[ICODE]pinkyteams.user.kick[/ICODE]
+[ICODE]pinkyteams.user.ally[/ICODE]
+[ICODE]pinkyteams.user.ff[/ICODE]
+[ICODE]pinkyteams.user.chat[/ICODE]
+[ICODE]pinkyteams.user.stats[/ICODE]
+[ICODE]pinkyteams.user.invite[/ICODE]
+[ICODE]pinkyteams.user.economy[/ICODE]
+[ICODE]pinkyteams.user.slots[/ICODE]
+[ICODE]pinkyteams.user.top[/ICODE]
+[ICODE]pinkyteams.user.rank[/ICODE]
+[ICODE]pinkyteams.user.accept[/ICODE]
+[ICODE]pinkyteams.user.decline[/ICODE]
+[ICODE]pinkyteams.user.resign[/ICODE]
+[ICODE]pinkyteams.user.report[/ICODE]
+[ICODE]pinkyteams.user.edit[/ICODE]
+[ICODE]pinkyteams.user.war[/ICODE]
+[ICODE]pinkyteams.bypass.homecooldown[/ICODE]
+[ICODE]pinkyteams.bypass.homedelay[/ICODE]
+[ICODE]pinkyteams.bypass.nametag[/ICODE]
+
+Legacy [ICODE]vanguardclans.*[/ICODE] nodes remain available as migration aliases.
 [/SPOILER]
 
-[IMG]https://i.imgur.com/5aD2GCH.png[/IMG]
+[CENTER][SIZE=6][COLOR=#ff69b4][B]PlaceholderAPI[/B][/COLOR][/SIZE][/CENTER]
+[SPOILER="Placeholder Examples"]
+[ICODE]%pinkyteams_prefix%[/ICODE]
+[ICODE]%pinkyteams_player_money%[/ICODE]
+[ICODE]%pinkyteams_clan_name%[/ICODE]
+[ICODE]%pinkyteams_clan_tag%[/ICODE]
+[ICODE]%pinkyteams_clan_leader%[/ICODE]
+[ICODE]%pinkyteams_clan_founder%[/ICODE]
+[ICODE]%pinkyteams_clan_money%[/ICODE]
+[ICODE]%pinkyteams_clan_kills%[/ICODE]
+[ICODE]%pinkyteams_clan_deaths%[/ICODE]
+[ICODE]%pinkyteams_clan_membercount%[/ICODE]
+[ICODE]%pinkyteams_clan_membercount_online%[/ICODE]
+[ICODE]%pinkyteams_clan_membercount_offline%[/ICODE]
+[ICODE]%pinkyteams_season_name%[/ICODE]
+[ICODE]%pinkyteams_season_active%[/ICODE]
+[ICODE]%pinkyteams_season_time_left%[/ICODE]
+[ICODE]%pinkyteams_clan_war_opponent%[/ICODE]
+[ICODE]%pinkyteams_clan_war_score%[/ICODE]
+[ICODE]%pinkyteams_clan_war_opponent_score%[/ICODE]
+[ICODE]%pinkyteams_clan_war_time_left%[/ICODE]
+[ICODE]%pinkyteams_top_<metric>_<position>[/ICODE]
+[ICODE]%pinkyteams_top_<metric>_<position>_<field>[/ICODE]
 
-[SIZE=5][B]Features[/B][/SIZE]
-[LIST]
-[ *]Public/private clans with hierarchical roles, slots, friendly fire toggles, teleport homes, and auto-cleanup when empty.
-[ *]Alliance system with requests, accept/decline/removal, friendly fire control, and invite auto-expiry every 5 minutes.
-[ *]Slot upgrades fueled by points, kills, and configurable costs plus `/clan slots` overview and buy wizard.
-[ *]Dynamic GUIs for members, allies, invites, and tops showing KDA, total kills/deaths, points, money, and member count.
-[ *]Leaderboard placeholders `%vanguardclans_top_<metric>_<position>[_<field]%` for KDA, points, money, members, kills, deaths, and combined stats.
-[ *]Nametag privacy that hooks into the internal scoreboard, TAB, or UnlimitedNametags and supports obfuscation, hide, or reset modes.
-[ *]Anti-multiaccount safeguards that can limit clan creation per IP whenever the global `max-clans` cap is reached.
-[ *]Discord webhooks for new clan creation and leaderboard shifts, fully toggleable in `config.yml` with separate channels.
-[ *]Multi-language engine with English/Spanish defaults, easy-to-edit `[lang/<code>.yml]`, and `/clanadmin lang select`.
-[ *]Storage-agnostic: YAML, SQLite, MariaDB with Hikari, full migrations, cache refresh, and stats/history APIs.
-[ *]Lightweight, modular architecture built for high concurrency while leaving room for subsection hooks (TAB, nametags, unlimited, webhooks).
+The complete, copy-ready placeholder catalog is included at the top of [ICODE]config.yml[/ICODE].
+[/SPOILER]
+
+[CENTER][SIZE=6][COLOR=#ff69b4][B]Installation[/B][/COLOR][/SIZE][/CENTER]
+[LIST=1]
+[*]Download [ICODE]pinkyteams-1.8.0.jar[/ICODE].
+[*]Place it inside your server's [ICODE]/plugins[/ICODE] directory.
+[*]Start the server once to generate the configuration and language files.
+[*]Choose your storage engine in [ICODE]config.yml[/ICODE]. SQLite is the default and needs no external database.
+[*]Optionally install Vault plus an economy plugin, PlaceholderAPI and TAB.
+[*]Grant [ICODE]pinkyteams.user[/ICODE] to players and [ICODE]pinkyteams.admin[/ICODE] to administrators.
 [/LIST]
 
-[SIZE=5][B]Language Support[/B][/SIZE]
-Translate every string in [ICODE]/lang[/ICODE], create your own locale, and switch with [ICODE]/clanadmin lang select <code>[/ICODE] without restarting.
+[CENTER][SIZE=6][COLOR=#ff69b4][B]Requirements & Hooks[/B][/COLOR][/SIZE][/CENTER]
+[LIST]
+[*][B]Required:[/B] Java 17 or newer and a Spigot/Paper-compatible 1.20+ server.
+[*][B]Optional:[/B] Vault, PlaceholderAPI and TAB.
+[*][B]Storage:[/B] YAML, SQLite, H2, MySQL or MariaDB. Database drivers are bundled.
+[/LIST]
+
+[CENTER][SIZE=6][COLOR=#ff69b4][B]Upgrading from VanguardClans[/B][/COLOR][/SIZE]
+Keep the old data folder and install PinkyTeams. On first startup, the plugin creates a backup-aware one-time migration without deleting the original directory. Legacy permissions and [ICODE]%vanguardclans_*%[/ICODE] placeholders can remain enabled temporarily while you update external configurations.
 
 [IMG]https://i.imgur.com/E2d24iZ.png[/IMG]
 
-[SIZE=5][B]Support & Contact[/B][/SIZE]
-Need help or want to request features?
-[URL='https://discord.gg/QkzxM22cSE']discord.gg/PinkyCore[/URL]
+[SIZE=6][COLOR=#ff69b4][B]Support[/B][/COLOR][/SIZE]
+Questions, bug reports or feature suggestions:
+[URL=https://discord.gg/QkzxM22cSE][B]Join the PinkyCore Discord[/B][/URL]
 
-[SIZE=4][B]⚔️ Empower your players. Unite clans, guard privacy, and let the stats speak.[/B]
-[COLOR=green][B]Download VanguardClans today and turn every server into a clan epicenter.[/B][/COLOR][/SIZE]
+[SIZE=5][B][COLOR=#ff69b4]Create teams. Build rivalries. Make every season matter.[/COLOR][/B][/SIZE]
 [/CENTER]

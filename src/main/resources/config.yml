@@ -1,35 +1,81 @@
-#############################################################################
-#                                                                           #
-#                          Available Placeholders:                          #
-#  ----------------------------------------------------------------------   #
-#  | %vanguardclans_prefix%               : Plugin prefix                |  #
-#  | %vanguardclans_clan_leader%          : Clan leader's name           |  #
-#  | %vanguardclans_clan_founder%         : Clan founder's name          |  #
-#  | %vanguardclans_clan_name%            : Clan name                    |  #
-#  | %vanguardclans_clan_tag%             : Clan tag                     |  #
-#  | %vanguardclans_clan_money%           : Clan vault                   |  #
-#  | %vanguardclans_clan_kills%           : Total clan kills             |  #
-#  | %vanguardclans_clan_deaths%          : Total clan deaths            |  #
-#  | %vanguardclans_clan_membercount_offline% : Offline members          |  #
-#  | %vanguardclans_clan_membercount_online%  : Online Members           |  #
-#  | %vanguardclans_clan_membercount%     : Total of members             |  #
-#  | %vanguardclans_player_money%         : Player's vault               |  #
-#  | %vanguardclans_top_<metric>_<position>[_<field>]% : Top leaderboard |  #
-#  |   <metric>: kda, points, money, members                             |  #
-#  |   <position>: 1, 2, 3...                                            |  #
-#  |   <field>: tag, name, value, money, points, members, kills,         |  #
-#  |            deaths, kda, kda_total, kda_avg (default = value)        |  #
-#  ----------------------------------------------------------------------   #
-#              Now you can use PlaceholderAPI placeholders.                 #
-#                                                                           #
-#############################################################################
+config-version: 4
+
+###############################################################################
+#                       PINKYTEAMS PLACEHOLDERS                               #
+#                                                                             #
+# General (PlaceholderAPI):                                                   #
+# %pinkyteams_prefix%                       - Plugin prefix                    #
+# %pinkyteams_player_money%                 - Player balance                  #
+# %pinkyteams_clan_leader%                  - Clan leader                     #
+# %pinkyteams_clan_founder%                 - Clan founder                    #
+# %pinkyteams_clan_name%                    - Plain clan name                 #
+# %pinkyteams_clan_tag%                     - Colored clan tag/name            #
+# %pinkyteams_clan_money%                   - Clan bank balance               #
+# %pinkyteams_clan_kills%                   - Total member kills              #
+# %pinkyteams_clan_deaths%                  - Total member deaths             #
+# %pinkyteams_clan_membercount%             - Total members                   #
+# %pinkyteams_clan_membercount_online%      - Online members                  #
+# %pinkyteams_clan_membercount_offline%     - Offline members                 #
+# %pinkyteams_clan_war_opponent%            - Active war opponent             #
+# %pinkyteams_clan_war_score%               - Clan score in active war        #
+# %pinkyteams_clan_war_opponent_score%      - Opponent score                  #
+# %pinkyteams_clan_war_time_left%           - Remaining war seconds           #
+# %pinkyteams_season_name%                  - Current season name             #
+# %pinkyteams_season_active%                - true/false                      #
+# %pinkyteams_season_time_left%             - Remaining season seconds        #
+#                                                                             #
+# Rankings:                                                                   #
+# %pinkyteams_top_<metric>_<position>%                                        #
+# %pinkyteams_top_<metric>_<position>_<field>%                                #
+#   metric   = kda, points, money, members                                    #
+#   position = 1, 2, 3...                                                     #
+#   field    = tag, name, value, money, points, members, kills, deaths,       #
+#              kda, kda_total, kda_avg                                        #
+# Examples:                                                                   #
+# %pinkyteams_top_kda_1_name%                                                 #
+# %pinkyteams_top_points_1_value%                                             #
+# %pinkyteams_top_money_3_tag%                                                #
+# %pinkyteams_top_members_2_members%                                          #
+#                                                                             #
+# Relational (TAB / PlaceholderAPI):                                          #
+# %rel_pinkyteams_nametag%                    - Complete target nametag        #
+# %rel_pinkyteams_nametag_obfuscate%          - Obfuscation prefix + reset    #
+# %rel_pinkyteams_nametag_obfuscate_prefix%   - Obfuscation prefix            #
+# %rel_pinkyteams_nametag_obfuscate_reset%    - Formatting reset              #
+# %rel_pinkyteams_nametag_obfuscate_suffix%   - Alias of reset                #
+###############################################################################
 
 
-prefix: "&7[&6&lᴠᴀɴɢᴜᴀʀᴅ&7&lᴄʟᴀɴꜱ&7]"
+prefix: "&7[&d&lᴘɪɴᴋʏᴛᴇᴀᴍꜱ&7]"
 
 
 placeholders:
   no-clan-value: "N/A" # text to show for clan placeholders when player has no clan (a player without clan will show "N/A", empty string shows nothing)
+
+compatibility:
+  # Temporary bridge for existing TAB, scoreboard and chat configurations.
+  # Disable after replacing every %vanguardclans_*% placeholder with %pinkyteams_*%.
+  legacy-placeholders: true
+
+wars:
+  enabled: true
+  request-expiration-seconds: 300
+  duration-seconds: 3600
+  score-to-win: 20
+  winner-bank-reward: 0
+  anti-farm:
+    cooldown-seconds: 300
+
+seasons:
+  enabled: true
+  default-duration-days: 30
+  reset-points-on-end: true
+  ranking-size: 10
+  rewards:
+    # Commands are executed as console. Available: {clan}, {leader}, {position}, {points}
+    "1": []
+    "2": []
+    "3": []
 
 commands:
   # When true, /clan without arguments will show the main help page.
@@ -55,7 +101,7 @@ storage:
   mariadb:
     host: "localhost"
     port: 3306
-    database: "vanguardclans"
+    database: "pinkyteams"
     username: "root"
     password: "password"
 
@@ -63,7 +109,7 @@ storage:
   mysql:
     host: "localhost"
     port: 3306
-    database: "vanguardclans"
+    database: "pinkyteams"
     username: "root"
     password: "password"
 
@@ -94,8 +140,8 @@ welcome-message:
 
   self-clan:
     - ""
-    - "You're on %vanguardclans_clan_name%"
-    - "Online Members: %vanguardclans_clan_membercount_online% / %vanguardclans_clan_membercount%"
+    - "You're on %pinkyteams_clan_name%"
+    - "Online Members: %pinkyteams_clan_membercount_online% / %pinkyteams_clan_membercount%"
     - ""
 
   to-clan:
@@ -126,7 +172,7 @@ nametag-privacy:
   enabled: false
   provider: "internal" # internal / tab / unt (unt = UnlimitedNametags, tab = TAB)
   mode: "obfuscate" # none / hide / obfuscate
-  bypass-permission: "" # permission to bypass nametag privacy effects (ej: vanguardclans.nametag.bypass)
+  bypass-permission: "" # permission to bypass nametag privacy effects (ej: pinkyteams.nametag.bypass)
   show-no-clan-names: true # default value to show/hide nametags of players without clan
   visibility:
     same-clan: "always"        # always / hideforotherteams / hideforownteam / never
@@ -170,6 +216,31 @@ clan-slots:
       slots: 3
 
 gui:
+  # Visual theme for all inventories. Invalid materials/sounds safely use defaults.
+  theme:
+    primary-color: "pink"
+    filler-material: "PINK_STAINED_GLASS_PANE"
+  sounds:
+    enabled: true
+    click: "UI_BUTTON_CLICK"
+    refresh: "BLOCK_NOTE_BLOCK_PLING"
+  # Main control center (54 slots, indexes 0-53). Every position and material is editable.
+  main:
+    items:
+      overview: {slot: 4, material: "PINK_BANNER"}
+      members: {slot: 19, material: "PLAYER_HEAD"}
+      invites: {slot: 20, material: "PAPER"}
+      allies: {slot: 21, material: "FIREWORK_ROCKET"}
+      bank: {slot: 22, material: "GOLD_INGOT"}
+      wars: {slot: 23, material: "IRON_SWORD"}
+      home: {slot: 24, material: "ENDER_PEARL"}
+      edit: {slot: 25, material: "NAME_TAG"}
+      top: {slot: 29, material: "NETHER_STAR"}
+      ranks: {slot: 30, material: "ANVIL"}
+      slots: {slot: 31, material: "CHEST"}
+      bank-history: {slot: 32, material: "WRITABLE_BOOK"}
+      refresh: {slot: 33, material: "CLOCK"}
+      close: {slot: 49, material: "BARRIER"}
   privacy:
     public: "&aPublic"
     private: "&cPrivate"
@@ -210,9 +281,10 @@ clan-tag:
 
 economy:
   enabled: true
-  system: "Vault" # Vault / Internal (VanguardClans economy system)
+  system: "Vault" # Vault / Internal (PinkyTeams economy system)
   bank:
     max-balance: 0 # 0 = unlimited
+    audit-display-limit: 10
 
   cost:
     create-clan: 1000
