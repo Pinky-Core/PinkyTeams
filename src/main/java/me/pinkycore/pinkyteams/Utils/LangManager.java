@@ -4,6 +4,10 @@ import me.pinkycore.pinkyteams.PinkyTeams;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class LangManager {
@@ -37,6 +41,7 @@ public class LangManager {
             String langName = file.getName().replace(".yml", "").toLowerCase(Locale.ROOT);
             plugin.getLogger().info("Cargando archivo de idioma: " + file.getName() + " como clave '" + langName + "'");
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            mergeBundledDefaults(file, config, langName);
             loadedLangs.put(langName, config);
         }
 
@@ -48,6 +53,53 @@ public class LangManager {
             plugin.saveConfig();
             plugin.getLogger().info("Se usará el idioma por defecto: " + currentLang);
         }
+    }
+
+    /** Keeps customized translations while adding new keys and removing legacy visible branding. */
+    private void mergeBundledDefaults(File file, YamlConfiguration config, String language) {
+        InputStream stream = plugin.getResource("lang/" + language + ".yml");
+        if (stream == null) return; // Custom language: there is no bundled fallback to merge.
+
+        boolean changed = false;
+        try (InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+            YamlConfiguration defaults = YamlConfiguration.loadConfiguration(reader);
+            for (Map.Entry<String, Object> entry : defaults.getValues(true).entrySet()) {
+                if (!config.contains(entry.getKey())) {
+                    config.set(entry.getKey(), entry.getValue());
+                    changed = true;
+                }
+            }
+            for (Map.Entry<String, Object> entry : new HashMap<>(config.getValues(true)).entrySet()) {
+                Object migrated = migrateBranding(entry.getValue());
+                if (!Objects.equals(entry.getValue(), migrated)) {
+                    config.set(entry.getKey(), migrated);
+                    changed = true;
+                }
+            }
+            if (changed) {
+                config.save(file);
+                plugin.getLogger().info("Idioma " + file.getName() + " actualizado con nuevas claves y branding de PinkyTeams.");
+            }
+        } catch (IOException e) {
+            plugin.getLogger().warning("No se pudo actualizar " + file.getName() + ": " + e.getMessage());
+        }
+    }
+
+    private Object migrateBranding(Object value) {
+        if (value instanceof String text) return migrateBrandingText(text);
+        if (value instanceof List<?> values) {
+            List<Object> migrated = new ArrayList<>(values.size());
+            for (Object item : values) migrated.add(item instanceof String text ? migrateBrandingText(text) : item);
+            return migrated;
+        }
+        return value;
+    }
+
+    private String migrateBrandingText(String text) {
+        return text
+            .replaceAll("(?i)Vanguard\\s*Clans", "PinkyTeams")
+            .replace("VᴀɴɢᴜᴀʀᴅCʟᴀɴꜱ", "ᴘɪɴᴋʏᴛᴇᴀᴍꜱ")
+            .replace("ᴠᴀɴɢᴜᴀʀᴅᴄʟᴀɴꜱ", "ᴘɪɴᴋʏᴛᴇᴀᴍꜱ");
     }
 
     public String getMessage(String path) {

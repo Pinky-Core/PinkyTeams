@@ -38,6 +38,10 @@ public final class LegacyDataMigrator {
         }
     }
 
+    public static boolean isMigrationComplete(PinkyTeams plugin) {
+        return Files.isRegularFile(plugin.getDataFolder().toPath().resolve(".vanguardclans-migrated"));
+    }
+
     private static boolean hasUserData(Path target) {
         return Files.exists(target.resolve("config.yml"))
             || Files.exists(target.resolve("data.yml"))

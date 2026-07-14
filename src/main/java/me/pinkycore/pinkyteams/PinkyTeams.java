@@ -110,6 +110,7 @@ public class PinkyTeams extends JavaPlugin {
       LegacyDataMigrator.migrateIfNeeded(this);
       saveDefaultConfig();
       ConfigMigrator.migrate(this);
+      disableLegacyPluginAfterMigration();
       this.clanHomeCooldown = getConfig().getInt("clan_home.cooldown", 30);
       this.clanHomeDelay = getConfig().getInt("clan_home.teleport_delay", 5);
       prefix = getConfig().getString("prefix", "&7[&d&lᴘɪɴᴋʏᴛᴇᴀᴍꜱ&7]");
@@ -224,6 +225,23 @@ public class PinkyTeams extends JavaPlugin {
       Bukkit.getConsoleSender().sendMessage(MSG.color("&e&lMax Clans: &f" + (getConfig().getInt("max-clans", -1) <= 0 ? "Unlimited" : getConfig().getInt("max-clans"))));
       Bukkit.getConsoleSender().sendMessage(MSG.color("&7"));
       Bukkit.getConsoleSender().sendMessage(MSG.color("&2&l============================================================"));
+   }
+
+   private void disableLegacyPluginAfterMigration() {
+      if (!getConfig().getBoolean("compatibility.disable-legacy-plugin-after-migration", true)
+          || !LegacyDataMigrator.isMigrationComplete(this)) return;
+
+      org.bukkit.plugin.Plugin legacy = getServer().getPluginManager().getPlugin("VanguardClans");
+      if (legacy == null || legacy == this) return;
+
+      // Run after the enable phase so plugin load order cannot re-enable the legacy instance afterward.
+      getServer().getScheduler().runTask(this, () -> {
+         if (legacy.isEnabled()) {
+            getLogger().warning("Successful migration detected. Disabling VanguardClans to prevent both plugins from modifying clan data.");
+            getServer().getPluginManager().disablePlugin(legacy);
+         }
+         getLogger().info("VanguardClans is disabled for this server session. Remove its old JAR before the next restart.");
+      });
    }
 
    private void refreshNametagProviders() {

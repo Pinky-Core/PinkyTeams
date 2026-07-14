@@ -1,4 +1,4 @@
-config-version: 4
+config-version: 5
 
 ###############################################################################
 #                       PINKYTEAMS PLACEHOLDERS                               #
@@ -56,6 +56,9 @@ compatibility:
   # Temporary bridge for existing TAB, scoreboard and chat configurations.
   # Disable after replacing every %vanguardclans_*% placeholder with %pinkyteams_*%.
   legacy-placeholders: true
+  # Prevents both plugins from changing clan data after a successful migration.
+  # The old JAR must still be removed manually before the next restart.
+  disable-legacy-plugin-after-migration: true
 
 wars:
   enabled: true

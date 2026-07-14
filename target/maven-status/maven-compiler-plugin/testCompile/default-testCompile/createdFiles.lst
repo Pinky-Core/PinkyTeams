@@ -13,3 +13,4 @@ me\pinkycore\pinkyteams\service\ClanSlotServiceTest.class
 me\pinkycore\pinkyteams\service\ClanBankServiceTest.class
 me\pinkycore\pinkyteams\service\ClanSeasonServiceTest.class
 me\pinkycore\pinkyteams\service\ClanBankServiceTest$FakeStore.class
+me\pinkycore\pinkyteams\Utils\LangManagerMigrationTest.class

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="me.pinkycore.pinkyteams.CMDs.ClanHomeCommandTest" time="0.311" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="me.pinkycore.pinkyteams.Utils.LangManagerMigrationTest" time="0.075" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -44,6 +44,7 @@
     <property name="localRepository" value="C:\Users\Admin\.m2\repository"/>
     <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\Admin\AppData\Local\Temp\"/>
+    <property name="com.zaxxer.hikari.pool_number" value="2"/>
     <property name="java.version" value="21.0.10"/>
     <property name="user.dir" value="D:\GitHub\VanguardClans-ACS"/>
     <property name="os.arch" value="amd64"/>
@@ -58,6 +59,11 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="acceptsOrdinarySolidBlocks" classname="me.pinkycore.pinkyteams.CMDs.ClanHomeCommandTest" time="0.297"/>
-  <testcase name="identifiesDangerousBlocks" classname="me.pinkycore.pinkyteams.CMDs.ClanHomeCommandTest" time="0.001"/>
+  <testcase name="mergesNewKeysPreservesCustomizationAndMigratesBranding" classname="me.pinkycore.pinkyteams.Utils.LangManagerMigrationTest" time="0.074">
+    <system-err><![CDATA[jul 12, 2026 6:06:48 P. M. me.pinkycore.pinkyteams.Utils.LangManager loadLangs
+INFO: Cargando archivo de idioma: es.yml como clave 'es'
+jul 12, 2026 6:06:48 P. M. me.pinkycore.pinkyteams.Utils.LangManager mergeBundledDefaults
+INFO: Idioma es.yml actualizado con nuevas claves y branding de PinkyTeams.
+]]></system-err>
+  </testcase>
 </testsuite>

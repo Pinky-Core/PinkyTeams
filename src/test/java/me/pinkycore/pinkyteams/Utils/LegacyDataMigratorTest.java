@@ -27,6 +27,7 @@ class LegacyDataMigratorTest {
 
         assertEquals("legacy-data", Files.readString(target.resolve("clans.db")));
         assertTrue(Files.exists(target.resolve(".vanguardclans-migrated")));
+        assertTrue(LegacyDataMigrator.isMigrationComplete(plugin));
         assertTrue(Files.exists(legacy.resolve("clans.db")));
     }
 
@@ -43,5 +44,6 @@ class LegacyDataMigratorTest {
 
         assertEquals("current", Files.readString(target.resolve("config.yml")));
         assertFalse(Files.exists(target.resolve(".vanguardclans-migrated")));
+        assertFalse(LegacyDataMigrator.isMigrationComplete(plugin));
     }
 }
