@@ -6,10 +6,13 @@
 [COLOR=#ff69b4][B]Version 1.8.0 • Made by PinkyCore[/B][/COLOR]
 [I]Spigot/Paper 1.20+ • Java 17+ • English & Spanish[/I]
 
-[IMG]https://i.imgur.com/hRABm91.png[/IMG]
+[IMG]{{REAL_SCREENSHOT_CLAN_DASHBOARD_URL}}[/IMG]
+[I]The configurable 54-slot PinkyTeams clan control center, captured in-game.[/I]
 
 [SIZE=6][COLOR=#ff69b4][B]Why PinkyTeams?[/B][/COLOR][/SIZE]
-PinkyTeams is a complete, configurable clan system designed for survival, PvP and network servers. It combines everyday clan management with wars, persistent seasons, rankings, economy, custom roles, alliances, PlaceholderAPI and five storage engines.
+PinkyTeams is a complete Minecraft teams and clans plugin for Spigot and Paper servers. It is designed for survival, PvP, Lifesteal, factions-style communities and multi-server networks that need more than a basic clan command. Players can create and customize clans, invite members, define roles, establish alliances, share a home, manage a bank, climb leaderboards, compete in timed wars and earn seasonal rewards.
+
+Server owners receive detailed configuration for messages, languages, permissions, storage, economy, teleportation, friendly fire, wars, seasons, nametag privacy, Discord webhooks and the graphical interface. PinkyTeams includes English and Spanish files, PlaceholderAPI support, Vault integration, automatic upgrades from VanguardClans and a public Bukkit API for custom integrations.
 
 [TABLE]
 [TR][TD][B]Clan management[/B][/TD][TD]Creation, invitations, public/private access, custom tags, homes and leadership tools[/TD][/TR]
@@ -19,7 +22,8 @@ PinkyTeams is a complete, configurable clan system designed for survival, PvP an
 [TR][TD][B]Storage[/B][/TD][TD]YAML, SQLite, H2, MySQL and MariaDB[/TD][/TR]
 [/TABLE]
 
-[IMG]https://i.imgur.com/UzuEmHU.png[/IMG]
+[IMG]{{REAL_SCREENSHOT_MEMBERS_AND_ROLES_URL}}[/IMG]
+[I]In-game member management and configurable clan roles.[/I]
 
 [SIZE=6][COLOR=#ff69b4][B]Main Features[/B][/COLOR][/SIZE]
 [/CENTER]
@@ -42,7 +46,13 @@ PinkyTeams is a complete, configurable clan system designed for survival, PvP an
 [*]Shared ranking cache and asynchronous storage queries for better server performance.
 [/LIST]
 
-[CENTER][IMG]https://i.imgur.com/CIjBXfS.png[/IMG]
+[CENTER]
+[IMG]{{REAL_SCREENSHOT_CLAN_WAR_URL}}[/IMG]
+[I]A real clan war status display with scoring and remaining time.[/I]
+
+[IMG]{{REAL_SCREENSHOT_LEADERBOARD_URL}}[/IMG]
+[I]The in-game clan leaderboard and ranking information.[/I]
+
 [SIZE=6][COLOR=#ff69b4][B]Commands[/B][/COLOR][/SIZE][/CENTER]
 
 [SPOILER="Player Commands"]
@@ -177,6 +187,22 @@ The complete, copy-ready placeholder catalog is included at the top of [ICODE]co
 [*]Grant [ICODE]pinkyteams.user[/ICODE] to players and [ICODE]pinkyteams.admin[/ICODE] to administrators.
 [/LIST]
 
+[CENTER][SIZE=6][COLOR=#ff69b4][B]How It Works In-Game[/B][/COLOR][/SIZE][/CENTER]
+[LIST=1]
+[*]A player opens [ICODE]/clan[/ICODE] and creates a new public or private clan.
+[*]The leader invites players, creates custom ranks and assigns granular clan permissions.
+[*]Members use clan chat, share a configurable clan home and contribute money to the audited clan bank.
+[*]Leaders create alliances, configure friendly fire and challenge rival clans to timed wars.
+[*]Kills award configurable points while anti-farming prevents repeated kills from inflating war scores.
+[*]Clans compete across points, KDA, money and member leaderboards throughout a server season.
+[*]When the season ends, PinkyTeams stores the historical ranking, optionally resets points and executes configured reward commands.
+[/LIST]
+
+[CENTER][SIZE=6][COLOR=#ff69b4][B]Configuration & Performance[/B][/COLOR][/SIZE][/CENTER]
+PinkyTeams can run with local YAML files for simple installations, embedded SQLite or H2 databases for standalone production servers, or MySQL/MariaDB for larger environments. Database drivers are included in the plugin. Rankings use shared caching, storage-heavy command queries run asynchronously, and configuration updates include automatic version migration with backups.
+
+The GUI is not hard-coded to one appearance. Administrators can change its materials, item slots, pink filler and interaction sounds. Language files retain custom translations while automatically receiving keys introduced by plugin updates.
+
 [CENTER][SIZE=6][COLOR=#ff69b4][B]Requirements & Hooks[/B][/COLOR][/SIZE][/CENTER]
 [LIST]
 [*][B]Required:[/B] Java 17 or newer and a Spigot/Paper-compatible 1.20+ server.
@@ -186,8 +212,6 @@ The complete, copy-ready placeholder catalog is included at the top of [ICODE]co
 
 [CENTER][SIZE=6][COLOR=#ff69b4][B]Upgrading from VanguardClans[/B][/COLOR][/SIZE]
 Keep the old data folder and install PinkyTeams. On first startup, the plugin creates a backup-aware one-time migration without deleting the original directory. Legacy permissions and [ICODE]%vanguardclans_*%[/ICODE] placeholders can remain enabled temporarily while you update external configurations.
-
-[IMG]https://i.imgur.com/E2d24iZ.png[/IMG]
 
 [SIZE=6][COLOR=#ff69b4][B]Support[/B][/COLOR][/SIZE]
 Questions, bug reports or feature suggestions:
