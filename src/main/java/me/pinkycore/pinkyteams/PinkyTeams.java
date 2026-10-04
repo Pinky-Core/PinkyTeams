@@ -183,7 +183,6 @@ public class PinkyTeams extends JavaPlugin {
 
       nameTagManager = new NameTagManager(this);
 
-      tabHook = new TabHook(this);
       unlimitedNametagHook = new UnlimitedNametagHook(this);
       String nametagProvider = getConfig().getString("nametag-privacy.provider", "internal");
       refreshNametagProviders();
@@ -245,13 +244,17 @@ public class PinkyTeams extends JavaPlugin {
    }
 
    private void refreshNametagProviders() {
+      boolean enabled = getConfig().getBoolean("nametag-privacy.enabled", false);
       String provider = getConfig().getString("nametag-privacy.provider", "internal");
-      if ("tab".equalsIgnoreCase(provider) && Bukkit.getPluginManager().isPluginEnabled("TAB")) {
+      if (enabled && "tab".equalsIgnoreCase(provider) && Bukkit.getPluginManager().isPluginEnabled("TAB")) {
+         if (tabHook == null) {
+            tabHook = new TabHook(this);
+         }
          tabHook.start();
-      } else {
+      } else if (tabHook != null) {
          tabHook.stop();
       }
-      if ("unt".equalsIgnoreCase(provider) && Bukkit.getPluginManager().isPluginEnabled("UnlimitedNameTags")) {
+      if (enabled && "unt".equalsIgnoreCase(provider) && Bukkit.getPluginManager().isPluginEnabled("UnlimitedNameTags")) {
          unlimitedNametagHook.start();
       } else {
          unlimitedNametagHook.stop();

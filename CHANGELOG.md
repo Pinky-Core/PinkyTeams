@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.1
+
+- Fixed startup and shutdown without TAB when nametag privacy is disabled or another provider is selected.
+- Initialize TAB privacy only when enabled, selected and installed; skip unavailable TAB APIs safely.
+- Added UnlimitedNameTags as an optional dependency so its integration starts after the provider.
+
 ## 1.8.0
 
 - Redesigned the clan GUI as a configurable 54-slot pink control center with live overview, navigation, wars, bank history, refresh actions and sounds.

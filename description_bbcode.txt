@@ -3,7 +3,7 @@
 [SIZE=5][B]Advanced Teams & Clans System[/B][/SIZE]
 [SIZE=4]Build communities, compete in seasons, fight clan wars and manage everything from a modern pink dashboard.[/SIZE]
 
-[COLOR=#ff69b4][B]Version 1.8.0 • Made by PinkyCore[/B][/COLOR]
+[COLOR=#ff69b4][B]Version 1.8.1 • Made by PinkyCore[/B][/COLOR]
 [I]Spigot/Paper 1.20+ • Java 17+ • English & Spanish[/I]
 
 [IMG]{{REAL_SCREENSHOT_CLAN_DASHBOARD_URL}}[/IMG]
@@ -179,7 +179,7 @@ The complete, copy-ready placeholder catalog is included at the top of [ICODE]co
 
 [CENTER][SIZE=6][COLOR=#ff69b4][B]Installation[/B][/COLOR][/SIZE][/CENTER]
 [LIST=1]
-[*]Download [ICODE]pinkyteams-1.8.0.jar[/ICODE].
+[*]Download [ICODE]pinkyteams-1.8.1.jar[/ICODE].
 [*]Place it inside your server's [ICODE]/plugins[/ICODE] directory.
 [*]Start the server once to generate the configuration and language files.
 [*]Choose your storage engine in [ICODE]config.yml[/ICODE]. SQLite is the default and needs no external database.

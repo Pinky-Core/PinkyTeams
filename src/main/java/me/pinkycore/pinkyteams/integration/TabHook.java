@@ -30,32 +30,50 @@ public class TabHook {
     }
 
     public void start() {
-        TabAPI api = TabAPI.getInstance();
-        if (api == null) {
-            plugin.getLogger().warning("TAB API no disponible; no se aplica privacidad via TAB.");
+        if (!isEnabledForTab(plugin.getConfig()) || !Bukkit.getPluginManager().isPluginEnabled("TAB")) {
+            stop();
             return;
         }
         stop();
+        try {
+            TabAPI api = TabAPI.getInstance();
+            if (api == null) {
+                plugin.getLogger().warning("TAB API no disponible; no se aplica privacidad via TAB.");
+                return;
+            }
+        } catch (LinkageError e) {
+            plugin.getLogger().warning("TAB API no disponible; no se aplica privacidad via TAB: " + e);
+            return;
+        }
         long period = Math.max(20L, plugin.getConfig().getLong("nametag-privacy.refresh-interval-ticks", 100));
         taskId = Bukkit.getScheduler().runTaskTimer(plugin, this::refreshAll, 20L, period).getTaskId();
         plugin.getLogger().info("Privacidad de nametag via TAB activada (se refresca cada " + period + " ticks).");
     }
 
     public void stop() {
-        if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
-            taskId = -1;
+        // An inactive hook must not resolve classes from the optional TAB plugin.
+        if (taskId == -1) {
+            return;
         }
-        TabAPI api = TabAPI.getInstance();
-        if (api != null) {
-            NameTagManager nm = api.getNameTagManager();
-            if (nm != null) {
-                for (TabPlayer viewer : api.getOnlinePlayers()) {
-                    for (TabPlayer target : api.getOnlinePlayers()) {
-                        nm.showNameTag(viewer, target);
+        Bukkit.getScheduler().cancelTask(taskId);
+        taskId = -1;
+        if (!Bukkit.getPluginManager().isPluginEnabled("TAB")) {
+            return;
+        }
+        try {
+            TabAPI api = TabAPI.getInstance();
+            if (api != null) {
+                NameTagManager nm = api.getNameTagManager();
+                if (nm != null) {
+                    for (TabPlayer viewer : api.getOnlinePlayers()) {
+                        for (TabPlayer target : api.getOnlinePlayers()) {
+                            nm.showNameTag(viewer, target);
+                        }
                     }
                 }
             }
+        } catch (LinkageError e) {
+            plugin.getLogger().warning("TAB API no disponible al detener la privacidad: " + e);
         }
     }
 
